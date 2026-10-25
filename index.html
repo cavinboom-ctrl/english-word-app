@@ -1,0 +1,2726 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>나의 영어 단어 도감</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#7C5CFF">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- 글꼴은 화면을 막지 않고 불러온다. 인터넷이 없으면 기기 기본 글꼴로 바로 보인다 -->
+<link href="https://fonts.googleapis.com/css2?family=Andika:wght@400;700&family=Jua&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<style>
+  :root{
+    --ink:#2B3A67; --ink-soft:#6B7BA8;
+    --sky:#E9EFFF; --sky-deep:#D4E0FF; --paper:#FFFFFF;
+    --grape:#7C5CFF; --grape-d:#5B3FD6;
+    --mint:#2BC48A; --mint-d:#1B9E6C;
+    --sun:#FFDD57; --coral:#FF7A7A; --coral-d:#E05555;
+    --naver:#03C75A; --naver-d:#029B46;
+    --line:#DCE4F7; --r:28px;
+    --en:"Andika","Comic Sans MS",system-ui,sans-serif;
+    --ko:"Jua","Noto Sans KR",system-ui,sans-serif;
+    --body:"Noto Sans KR",system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:var(--body);color:var(--ink);min-height:100vh;
+    background:
+      radial-gradient(circle at 12% 8%, #FFF3C4 0 3px, transparent 3px),
+      radial-gradient(circle at 82% 22%, #CFF6E6 0 3px, transparent 3px),
+      radial-gradient(circle at 40% 70%, #E2D9FF 0 3px, transparent 3px),
+      var(--sky);
+    background-size:220px 220px;
+  }
+  .app{max-width:1000px;margin:0 auto;padding:18px 18px 130px}
+  header{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+  .logo{font-family:var(--ko);font-size:26px;display:flex;align-items:center;gap:10px}
+  .logo .mark{width:44px;height:44px;border-radius:14px;background:var(--grape);display:grid;place-items:center;font-size:24px;box-shadow:0 5px 0 var(--grape-d)}
+  .count{margin-left:auto;background:var(--paper);border:3px solid var(--line);border-radius:999px;padding:8px 18px;font-family:var(--ko);font-size:18px}
+  .count b{color:var(--grape);font-size:22px}
+  .gear{width:48px;height:48px;border-radius:50%;border:3px solid var(--line);background:#fff;font-size:22px;cursor:pointer;box-shadow:0 4px 0 var(--line)}
+  .gear:active{transform:translateY(3px);box-shadow:0 1px 0 var(--line)}
+
+  .panel{background:var(--paper);border-radius:var(--r);padding:22px;border:3px solid var(--line);box-shadow:0 8px 0 rgba(43,58,103,.07)}
+  .btn{font-family:var(--ko);font-size:22px;border:0;border-radius:22px;padding:16px 26px;color:#fff;background:var(--grape);box-shadow:0 6px 0 var(--grape-d);cursor:pointer;transition:transform .08s,box-shadow .08s;display:inline-flex;align-items:center;gap:10px;justify-content:center;text-decoration:none}
+  .btn:active{transform:translateY(4px);box-shadow:0 2px 0 var(--grape-d)}
+  .btn.mint{background:var(--mint);box-shadow:0 6px 0 var(--mint-d)}
+  .btn.mint:active{box-shadow:0 2px 0 var(--mint-d)}
+  .btn.naver{background:var(--naver);box-shadow:0 6px 0 var(--naver-d)}
+  .btn.naver:active{box-shadow:0 2px 0 var(--naver-d)}
+  .btn.ghost{background:var(--paper);color:var(--ink);box-shadow:0 6px 0 var(--line);border:3px solid var(--line)}
+  .btn.ghost:active{box-shadow:0 2px 0 var(--line)}
+  .btn.coral{background:var(--coral);box-shadow:0 6px 0 var(--coral-d)}
+  .btn.coral:active{box-shadow:0 2px 0 var(--coral-d)}
+  .btn[disabled]{opacity:.4;pointer-events:none}
+  .btn.small{font-size:17px;padding:11px 18px;border-radius:16px}
+
+  .screen{display:none;animation:pop .28s ease}
+  .screen.on{display:block}
+  @keyframes pop{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+  h2.title{font-family:var(--ko);font-size:26px;margin:0 0 6px}
+  p.hint{margin:0 0 18px;color:var(--ink-soft);font-size:16px;line-height:1.6}
+
+  .word-input-row{display:flex;gap:12px;flex-wrap:wrap}
+  #wordInput{flex:1;min-width:230px;font-family:var(--en);font-size:40px;font-weight:700;padding:14px 22px;border-radius:22px;border:4px dashed var(--sky-deep);background:#FBFCFF;color:var(--ink);outline:none;text-align:center}
+  #wordInput:focus{border-color:var(--grape);border-style:solid;background:#fff}
+  #wordInput::placeholder{font-family:var(--ko);font-size:23px;color:#B9C4E0}
+
+  .suggest{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .suggest:empty{display:none}
+  .sug{border:3px solid var(--line);background:#fff;border-radius:999px;padding:8px 16px;cursor:pointer;font-family:var(--en);font-weight:700;font-size:20px;color:var(--ink);display:inline-flex;align-items:center;gap:8px}
+  .sug small{font-family:var(--ko);font-weight:400;font-size:15px;color:var(--ink-soft)}
+  .sug:active{transform:scale(.97);border-color:var(--grape)}
+  .loading{display:flex;align-items:center;gap:14px;padding:26px 4px;font-family:var(--ko);font-size:20px;color:var(--ink-soft)}
+  .dots span{display:inline-block;width:14px;height:14px;border-radius:50%;background:var(--grape);margin-right:6px;animation:bob .9s infinite}
+  .dots span:nth-child(2){background:var(--sun);animation-delay:.15s}
+  .dots span:nth-child(3){background:var(--mint);animation-delay:.3s}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+  .found-head{display:flex;align-items:center;gap:14px;margin:22px 0 10px;flex-wrap:wrap}
+  .found-word{font-family:var(--en);font-weight:700;font-size:46px;line-height:1}
+  .found-ph{font-family:var(--en);font-size:22px;color:var(--ink-soft)}
+  .gloss{font-family:var(--ko);font-size:24px;background:var(--sun);border-radius:999px;padding:6px 20px}
+  .speak{width:56px;height:56px;border-radius:50%;border:3px solid var(--line);background:#fff;font-size:26px;cursor:pointer;box-shadow:0 5px 0 var(--line)}
+  .speak:active{transform:translateY(3px);box-shadow:0 2px 0 var(--line)}
+
+  .meaning{width:100%;text-align:left;display:block;background:#fff;cursor:pointer;border:4px solid var(--line);border-radius:24px;padding:16px 20px;margin-bottom:14px;transition:border-color .15s,transform .12s}
+  .meaning:active{transform:scale(.99)}
+  .meaning .pos{display:inline-block;font-family:var(--ko);font-size:15px;color:#fff;background:var(--ink-soft);border-radius:999px;padding:3px 14px;margin-bottom:8px}
+  .meaning .ko{display:block;font-family:var(--ko);font-size:32px;line-height:1.45;width:fit-content;max-width:100%;background-image:linear-gradient(var(--sun),var(--sun));background-repeat:no-repeat;background-position:0 88%;background-size:0% 52%;transition:background-size .35s cubic-bezier(.6,0,.3,1)}
+  .meaning .alt{display:block;font-family:var(--ko);font-size:18px;color:var(--ink-soft);margin-top:6px}
+  .meaning .en{display:block;font-family:var(--en);font-size:19px;color:var(--ink-soft);margin-top:8px;line-height:1.5}
+  .meaning .ex{display:block;margin-top:10px;font-family:var(--en);font-size:19px;opacity:.85}
+  .meaning .exko{display:block;font-size:16px;color:var(--ink-soft)}
+  .meaning .tick{float:right;width:38px;height:38px;border-radius:50%;border:3px solid var(--line);display:grid;place-items:center;color:transparent;font-size:20px;font-weight:900;background:#fff}
+  .meaning.on{border-color:var(--grape)}
+  .meaning.on .ko{background-size:100% 52%}
+  .meaning.on .tick{background:var(--grape);border-color:var(--grape);color:#fff}
+  @media (prefers-reduced-motion:reduce){.meaning .ko{transition:none}.card{transition:none}}
+
+  .pen-tip{display:flex;align-items:center;gap:10px;background:#FFF9DE;border:3px solid var(--sun);border-radius:20px;padding:12px 18px;font-family:var(--ko);font-size:18px;margin-bottom:16px}
+  .naver-tip{background:#EDFBF3;border-color:var(--naver)}
+  .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+  .src{font-size:14px;color:var(--ink-soft);margin-top:14px}
+  .steps{counter-reset:s;list-style:none;padding:0;margin:0 0 14px}
+  .steps li{counter-increment:s;position:relative;padding:6px 0 6px 40px;font-size:17px;line-height:1.6}
+  .steps li::before{content:counter(s);position:absolute;left:0;top:6px;width:28px;height:28px;border-radius:50%;background:var(--naver);color:#fff;font-family:var(--ko);font-size:16px;display:grid;place-items:center}
+
+  .stage{perspective:1600px;margin:6px auto 18px;max-width:720px}
+  .card{position:relative;width:100%;aspect-ratio:4/3;transform-style:preserve-3d;transition:transform .55s cubic-bezier(.4,.1,.2,1);cursor:pointer}
+  .card.flip{transform:rotateY(180deg)}
+  .face{position:absolute;inset:0;backface-visibility:hidden;border-radius:36px;background:var(--paper);border:5px solid var(--line);box-shadow:0 12px 0 rgba(43,58,103,.09);padding:26px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:auto}
+  .face.back{transform:rotateY(180deg);align-items:stretch;justify-content:flex-start;border-color:var(--sky-deep);background:repeating-linear-gradient(#fff 0 44px,#EFF3FF 44px 46px)}
+  .face .big{font-family:var(--en);font-weight:700;font-size:clamp(44px,12vw,104px);line-height:1.05;text-align:center;word-break:break-word}
+  .face .emoji{font-size:clamp(40px,9vw,72px);margin-bottom:6px}
+  .face .ph{font-family:var(--en);font-size:24px;color:var(--ink-soft);margin-top:10px}
+  .flip-hint{position:absolute;bottom:16px;font-family:var(--ko);font-size:16px;color:var(--ink-soft)}
+  .back h3{font-family:var(--en);font-weight:700;font-size:30px;margin:0 0 12px;text-align:center}
+  .back .m{margin-bottom:16px}
+  .back .m .pos{font-family:var(--ko);font-size:14px;background:var(--ink-soft);color:#fff;border-radius:999px;padding:2px 12px}
+  .back .m .ko{display:inline-block;font-family:var(--ko);font-size:clamp(25px,4.4vw,34px);line-height:1.5;background-image:linear-gradient(var(--sun),var(--sun));background-repeat:no-repeat;background-position:0 88%;background-size:100% 50%}
+  .back .m .en{font-family:var(--en);font-size:19px;color:var(--ink-soft);line-height:1.5}
+  .back .m .ex{font-family:var(--en);font-size:19px;margin-top:4px}
+  .back .m .exko{font-size:15px;color:var(--ink-soft)}
+  .back .from{text-align:center;font-size:13px;color:var(--ink-soft);margin-top:auto;padding-top:8px}
+
+  .deck-bar{display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap}
+  .nav{width:66px;height:66px;border-radius:50%;border:4px solid var(--line);background:#fff;font-size:28px;color:var(--ink);cursor:pointer;box-shadow:0 6px 0 var(--line)}
+  .nav:active{transform:translateY(3px);box-shadow:0 2px 0 var(--line)}
+  .progress{font-family:var(--ko);font-size:20px;min-width:96px;text-align:center}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+  .chip{background:#fff;border:4px solid var(--line);border-radius:24px;padding:16px 12px;text-align:center;cursor:pointer;transition:transform .12s,border-color .12s}
+  .chip:active{transform:scale(.97)}
+  .chip:hover{border-color:var(--grape)}
+  .chip .e{font-size:32px}
+  .chip .w{font-family:var(--en);font-weight:700;font-size:26px;word-break:break-word;margin-top:4px}
+  .chip .k{font-family:var(--ko);font-size:16px;color:var(--ink-soft);margin-top:2px}
+
+  .empty{text-align:center;padding:50px 20px;color:var(--ink-soft)}
+  .empty .e{font-size:60px}
+  .empty p{font-family:var(--ko);font-size:20px}
+
+  .tabbar{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:center;gap:10px;padding:10px 12px calc(10px + env(safe-area-inset-bottom));background:rgba(233,239,255,.93);backdrop-filter:blur(8px);border-top:3px solid var(--line);z-index:20}
+  .tab{flex:1;max-width:220px;border:0;background:transparent;border-radius:20px;padding:10px 6px;cursor:pointer;font-family:var(--ko);font-size:17px;color:var(--ink-soft);display:flex;flex-direction:column;align-items:center;gap:2px}
+  .tab .i{font-size:26px}
+  .tab.on{background:var(--paper);color:var(--grape);box-shadow:0 4px 0 var(--line)}
+
+  .toast{position:fixed;left:50%;bottom:112px;transform:translateX(-50%) translateY(20px);opacity:0;background:var(--ink);color:#fff;font-family:var(--ko);font-size:19px;padding:14px 26px;border-radius:999px;transition:.25s;pointer-events:none;z-index:60}
+  .toast.on{opacity:1;transform:translateX(-50%)}
+
+  textarea.pad{width:100%;font-family:var(--ko);font-size:22px;padding:14px 18px;border-radius:20px;border:4px solid var(--line);outline:none;resize:vertical;min-height:120px;color:var(--ink);line-height:1.6}
+  textarea.pad:focus{border-color:var(--naver)}
+  .error{background:#FFF0F0;border:3px solid var(--coral);border-radius:20px;padding:14px 18px;font-size:17px;margin-bottom:14px;line-height:1.6}
+  :focus-visible{outline:4px solid var(--grape);outline-offset:3px}
+
+  .modal{position:fixed;inset:0;background:rgba(43,58,103,.45);display:none;place-items:center;padding:18px;z-index:80;overflow:auto}
+  .modal.on{display:grid}
+  .modal .box{background:#fff;border-radius:var(--r);border:3px solid var(--line);padding:24px;max-width:640px;width:100%;max-height:90vh;overflow:auto}
+  .modal h3{font-family:var(--ko);font-size:24px;margin:0 0 4px}
+  .modal h4{font-family:var(--ko);font-size:19px;margin:22px 0 8px;padding-top:16px;border-top:2px dashed var(--line)}
+  .modal p{font-size:15px;color:var(--ink-soft);line-height:1.65;margin:0 0 10px}
+  .modal input[type=password]{width:100%;font-size:16px;padding:12px 14px;border-radius:14px;border:3px solid var(--line);outline:none;font-family:var(--body)}
+  .switch{display:flex;align-items:center;gap:12px;font-size:17px;cursor:pointer;padding:10px 0}
+  .switch input{width:24px;height:24px;accent-color:var(--naver)}
+  .diag{font-size:16px;line-height:2}
+  .diag b{font-family:var(--ko);font-weight:400}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header>
+    <div class="logo"><span class="mark">📚</span> 나의 영어 단어 도감</div>
+    <div class="count">모은 단어 <b id="cnt">0</b>개</div>
+    <button class="gear" id="gearBtn" aria-label="설정">⚙️</button>
+  </header>
+
+  <div class="error" id="storeWarn" hidden>⚠️ 지금 여는 방식에서는 <b>모은 카드가 저장되지 않아요.</b> 부모님께 이 화면을 보여 주세요. (사용안내 파일의 "카드가 저장되지 않을 때"를 따라 하면 해결돼요)</div>
+
+  <section class="screen on" id="s-add">
+    <div class="panel">
+      <h2 class="title">✏️ 새 단어 모으기</h2>
+      <p class="hint">영어 단어를 쓰고 <b>뜻 찾기</b>를 눌러 보세요. 네이버 사전에서 본 뜻을 옮겨 담을 수도 있어요. (한글로 써도 영어 단어를 찾아 줘요)</p>
+      <div class="word-input-row">
+        <input id="wordInput" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="영어 단어를 써 보세요">
+        <button class="btn" id="findBtn">🔍 뜻 찾기</button>
+      </div>
+      <div class="suggest" id="suggest" aria-label="추천 단어"></div>
+      <div class="actions" style="margin-top:12px">
+        <button class="btn naver small" id="naverBtn">📗 네이버 사전에서 뜻 가져오기</button>
+        <button class="btn ghost small" id="handBtn">✍️ 뜻 직접 쓰기</button>
+      </div>
+      <div id="findArea"></div>
+    </div>
+  </section>
+
+  <section class="screen" id="s-study"></section>
+
+  <section class="screen" id="s-list">
+    <div class="panel">
+      <h2 class="title">🗂 내 단어 목록</h2>
+      <p class="hint">단어를 누르면 그 카드로 바로 갈 수 있어요.</p>
+      <div id="listArea"></div>
+    </div>
+  </section>
+</div>
+
+<nav class="tabbar">
+  <button class="tab on" data-go="add"><span class="i">✏️</span>단어 모으기</button>
+  <button class="tab" data-go="study"><span class="i">🃏</span>카드 공부</button>
+  <button class="tab" data-go="list"><span class="i">🗂</span>단어 목록</button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<div class="modal" id="modal">
+  <div class="box">
+    <h3>⚙️ 부모님 설정</h3>
+    <p>아이 화면에서는 쓸 일이 없는 항목이에요.</p>
+
+    <h4>📗 네이버 사전</h4>
+    <p>네이버 사전은 앱이 뜻을 자동으로 가져올 수 있는 공개 API를 제공하지 않고, 뜻풀이도 옥스퍼드·동아출판 등에서 라이선스한 저작물이라 자동 수집·저장이 허용되지 않습니다. 그래서 이 앱은 <b>네이버 사전을 열어 주고, 아이가 고른 뜻을 옮겨 담는 방식</b>으로 연결합니다. 개인 학습용으로만 사용해 주세요.</p>
+    <label class="switch"><input type="checkbox" id="naverFirst"> 뜻 찾기를 누르면 네이버 사전을 함께 열기</label>
+
+    <h4>🛡 어린이 보호 필터 <span style="font-size:14px;color:#2BC48A">항상 켜짐</span></h4>
+    <p>뜻은 <b>① 앱에 들어 있는 초등 기본 단어 사전 → ② 인터넷 사전</b> 순서로 찾습니다. 기본 사전에는 한국 초등 영어와 미국 초등 1~3학년 워크북에 자주 나오는 단어가 아이 눈높이의 뜻으로 들어 있고, 인터넷이 없어도 찾을 수 있어요.</p>
+    <p>인터넷 사전(위키낱말사전 기반)은 폐어·속어·성인 표현까지 모두 싣습니다. 이 필터는 성적 표현, 욕설, 비하 표현, 마약, 자해 관련 뜻과 속어·비어 표시가 붙은 뜻을 검색·표시·저장 어느 단계에서도 통과시키지 않습니다. 검색어 자체가 걸리면 사전 페이지도 열리지 않아요. 좋은 뜻과 나쁜 뜻을 함께 가진 단어는 학습용 뜻만 보여 줍니다.</p>
+    <p>더 걸러내고 싶은 말이 있으면 쉼표나 줄바꿈으로 적어 주세요.</p>
+    <textarea id="blockList" style="width:100%;font-size:16px;padding:12px 14px;border-radius:14px;border:3px solid var(--line);outline:none;font-family:var(--body);min-height:70px" placeholder="예) 무서운말, 놀리는말"></textarea>
+    <div class="actions" style="margin-top:10px"><button class="btn small mint" id="blockSave">보호 목록 저장</button></div>
+
+    <h4>🔊 소리 확인</h4>
+    <p>소리 듣기는 사전 녹음 파일 → 기기 음성 → 예비 음성 순서로 시도합니다. 소리가 안 나면 아래에서 어느 단계가 되는지 확인해 보세요.</p>
+    <div class="diag" id="sound">아직 확인하지 않았어요.</div>
+    <div class="actions">
+      <button class="btn small ghost" id="soundBtn">소리 확인하기</button>
+      <button class="btn small ghost" id="soundPlay">🔊 test 발음 들어보기</button>
+    </div>
+
+    <h4>🔌 연결 상태 확인</h4>
+    <p>자동 뜻 채우기가 안 될 때 어디가 막혔는지 확인할 수 있어요.</p>
+    <div class="diag" id="diag">아직 확인하지 않았어요.</div>
+    <div class="actions"><button class="btn small ghost" id="diagBtn">연결 확인하기</button></div>
+
+    <h4>💾 카드 백업</h4>
+    <p>카드는 이 브라우저 안에만 저장돼요. 기기를 바꾸거나 브라우저 기록을 지우기 전에 파일로 내보내 두세요.</p>
+    <div class="actions">
+      <button class="btn small ghost" id="exportBtn">📤 파일로 내보내기</button>
+      <button class="btn small ghost" id="importBtn">📥 파일에서 가져오기</button>
+      <input type="file" id="importFile" accept=".json,application/json" hidden>
+    </div>
+
+    <h4>🤖 AI 사전 쓰기 (선택)</h4>
+    <p>Anthropic API 키를 넣으면 초등 저학년 눈높이로 다듬은 뜻과 예문을 자동으로 받아옵니다. 키는 이 기기의 브라우저에만 저장돼요.</p>
+    <input type="password" id="keyInput" placeholder="sk-ant-... (선택 사항)">
+    <div class="actions" style="margin-top:10px">
+      <button class="btn small mint" id="keySave">저장</button>
+      <button class="btn small ghost" id="keyClear">지우기</button>
+    </div>
+
+    <h4></h4>
+    <div class="actions"><button class="btn" id="closeModal">닫기</button></div>
+    <p style="margin-top:16px">자동 채우기 출처: 앱 내장 초등 기본 단어 사전 · Free Dictionary API(Wiktionary, CC BY-SA) · Google 번역 사전 · MyMemory</p>
+  </div>
+</div>
+
+<script>
+/* =========================================================
+   📱 홈 화면 앱 + 오프라인 사용
+   인터넷 주소(https)로 열면 sw.js 가 앱 파일을 기기에 저장해 두어
+   다음부터는 인터넷이 없어도 열린다. 파일로 직접 열면 건너뛴다.
+   ========================================================= */
+(function enableOffline(){
+  try{
+    const local = location.hostname==='localhost' || location.hostname==='127.0.0.1';
+    if(!('serviceWorker' in navigator) || (location.protocol!=='https:' && !local)) return;
+    window.addEventListener('load', ()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+  }catch(e){}
+})();
+
+/* ================= 저장소 ================= */
+const SANDBOX = !!(window.storage && typeof window.storage.get === 'function');
+const KEY='flashcards:v3', KEY_API='flashcards:apikey', KEY_NF='flashcards:naverfirst', KEY_BL='flashcards:blocklist';
+const store = {
+  async get(k){ try{ if(SANDBOX){const r=await window.storage.get(k); return r?r.value:null;} return localStorage.getItem(k);}catch(e){return null;} },
+  async set(k,v){ try{ if(SANDBOX){await window.storage.set(k,v); return true;} localStorage.setItem(k,v); return true;}catch(e){return false;} }
+};
+
+let cards=[], idx=0, found=null, picked=new Set(), editingId=null, apiKey='', naverFirst=false, extraBlock=[];
+const $ = s=>document.querySelector(s);
+const esc = s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),1900);}
+
+/** 이 기기·이 열기 방식에서 카드가 실제로 저장되는지 확인한다 */
+function storageWorks(){
+  if(SANDBOX) return true;
+  try{ localStorage.setItem('__t','1'); const ok = localStorage.getItem('__t')==='1'; localStorage.removeItem('__t'); return ok; }
+  catch(e){ return false; }
+}
+async function load(){
+  if(!storageWorks()) $('#storeWarn').hidden = false;
+  try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist(); }catch(e){}   // 브라우저가 카드를 함부로 지우지 않게 부탁한다
+  const raw = await store.get(KEY);
+  try{ cards = raw?JSON.parse(raw):[]; }catch(e){ cards=[]; }
+  apiKey = (await store.get(KEY_API))||'';
+  naverFirst = (await store.get(KEY_NF))==='1';
+  $('#naverFirst').checked = naverFirst;
+  const bl = (await store.get(KEY_BL))||'';
+  extraBlock = SAFE.parseList(bl);
+  $('#blockList').value = bl;
+  // 🛡 예전에 저장된 카드에 부적절한 뜻이 남아 있으면 지운다
+  let changed = false;
+  cards = cards.filter(c=>{
+    const f = SAFE.filterMeanings(c.meanings||[]);
+    const a = SAFE.filterMeanings(c.all||[]);
+    if(f.hidden || a.hidden) changed = true;
+    c.meanings = f.kept; c.all = a.kept;
+    return c.meanings.length > 0;
+  });
+  if(changed) await save();
+  render();
+}
+async function save(){ if(!(await store.set(KEY, JSON.stringify(cards)))) toast('저장 공간을 쓸 수 없어요. 설정에서 백업해 주세요.'); }
+
+/* =========================================================
+   🛡 어린이 보호 필터
+   위키낱말사전 기반 API는 폐어·속어·성인 표현까지 모두 싣기 때문에
+   (예: conjunction 의 옛 뜻 "sexual intercourse") 뜻 단위로 걸러낸다.
+   모든 출처(자동 사전 / AI / 네이버 붙여넣기 / 직접 입력)에 똑같이 적용된다.
+   ========================================================= */
+const SAFE = (()=>{
+  // 영어: 단어 경계로만 매칭해 cocktail·hello 같은 오탐을 막는다
+  const EN = /\b(\w*fuck\w*|(bull|horse|dip)?shit\w*|bitch\w*|bastard\w*|asshole\w*|arse|arses|arsehole\w*|jackass|dumbass|badass|smartass|damn\w*|goddamn\w*|dammit|crap|crappy|piss|pissed|pissing|dick|dicks|dickhead|pussy|pussies|boob|boobs|boobies|tits|titty|titties|wank\w*|twat|bollocks|bugger|douche\w*|whores?|sluts?|hooker|stripper|horny|boner|dildo|blowjob|handjob|cum|jizz|sexy|nude|nudity|nigger\w*|nigga\w*|faggot\w*|fag|fags|dyke|retard|retarded|chink|spic|kike|wtf|stfu|milf|hentai|xxx|sex|sexes|sexual|sexually|sexuality|intercourse|coitus|copulat\w*|fornicat\w*|orgasm\w*|masturbat\w*|erotic\w*|porn\w*|prostitut\w*|harlot|whore|slut|genital\w*|penis|phallus|vagina|vulva|testicle\w*|scrotum|semen|sperm|ejaculat\w*|anus|nipple|erection|libido|incest\w*|rape|raped|raping|rapist|molest\w*|p(a)?edophil\w*|brothel|condom|contracept\w*|virginity|puberty|menstruat\w*|lewd|obscene|fuck\w*|shitty|cunt|slutty|heroin|cocaine|marijuana|cannabis|opium|narcotic\w*|methamphetamine|suicide|self-harm|castrat\w*|bestiality|sodomy|sodomit\w*)\b/i;
+  // 한국어: 짧고 흔한 낱말(질, 정 등)은 오탐이 커서 넣지 않는다
+  const KO = /(씨발|씨바|시발|씨팔|씹새|씹할|씹년|ㅅㅂ|ㅆㅂ|병신|ㅂㅅ|개새끼|개소리|개년|좆|존나|졸라게|지랄|염병|엿먹|엿 먹|닥쳐|미친놈|미친년|미친새끼|썅|쌍놈|쌍년|새끼야|빌어먹을|젠장|제기랄|망할 놈|똥구멍|후장|젖꼭지|젖가슴|알몸|누드|야동|야한|섹시|꼴리|딸딸이|걸레년|화냥|갈보|성교|성행위|성관계|섹스|정사|교미|교접|자위행위|음란|외설|포르노|매춘|매음|창녀|성기|음경|고환|정액|사정하다|발기|오르가슴|강간|성폭행|성추행|성희롱|근친상간|변태|처녀성|월경|생리혈|자살|자해|마약|헤로인|코카인|대마초|필로폰|아편|거세)/;
+
+  const parseList = s => String(s||'').split(/[\n,]/).map(x=>x.trim().toLowerCase()).filter(Boolean);
+  function hitsExtra(text){
+    const t = String(text||'').toLowerCase();
+    return extraBlock.some(w => t.includes(w));
+  }
+  /** 이 글에 아이에게 맞지 않는 표현이 있는가 */
+  // 나쁜 말과 글자가 겹칠 뿐인 평범한 낱말은 검사 전에 빼 둔다 (정사각형 ≠ 정사)
+  const KO_OK = /정사각|전성기|거세[다게]|거센|발기인|시발점|시발역/g;
+  // 뜻풀이에 붙은 속어·비어·비하 표시
+  const LABEL = /\((?:[^)]*\b)?(slang|vulgar|derogatory|offensive|pejorative|obscene|taboo|ethnic slur|euphemis\w*)\b[^)]*\)/i;
+  function bad(text){
+    if(!text) return false;
+    const t = String(text);
+    return EN.test(t) || KO.test(t.replace(KO_OK,'')) || hitsExtra(t);
+  }
+  /** 속어·비어 표시가 붙은 뜻풀이인가 */
+  function rude(text){ return !!text && LABEL.test(String(text)); }
+  /** 검색어 자체가 걸러야 할 단어인가 */
+  function blockedWord(w){
+    const t = String(w||'').trim();
+    if(!t) return false;
+    return EN.test(t) || KO.test(t.replace(KO_OK,'')) || extraBlock.includes(t.toLowerCase());
+  }
+  /** 뜻 목록에서 부적절한 항목을 덜어낸다 */
+  function filterMeanings(list){
+    let hidden = 0;
+    const kept = (list||[]).filter(m=>{
+      if(bad(m.ko) || bad(m.en) || rude(m.en) || rude(m.ko)){ hidden++; return false; }
+      return true;
+    }).map(m=>{
+      const c = Object.assign({}, m);
+      if(bad(c.example) || bad(c.exampleKo)){ c.example=''; c.exampleKo=''; }
+      if(c.alt) c.alt = c.alt.split(/\s*,\s*/).filter(t=>!bad(t)).join(', ');
+      return c;
+    });
+    return {kept, hidden};
+  }
+  /** 검색 결과 전체를 안전하게 다듬는다 */
+  function sanitize(res){
+    const {kept, hidden} = filterMeanings(res.meanings);
+    if(!kept.length){ const e=new Error('blocked'); e.code='blocked'; throw e; }
+    res.meanings = kept;
+    res.hidden = hidden;
+    if(bad(res.koWord)) res.koWord = kept[0].ko;
+    return res;
+  }
+  return {bad, rude, blockedWord, filterMeanings, sanitize, parseList};
+})();
+
+/* =========================================================
+   ⭐ 초등 기본 단어 사전 (앱 안에 들어 있어 인터넷 없이도 찾는다)
+   한 줄 = 단어|품사=뜻;품사=뜻|예문|예문 뜻|이모지
+   품사: n 명사 v 동사 a 형용사 d 부사 p 전치사 r 대명사 c 접속사 i 감탄사 m 수 t 한정사 x 표현
+   뜻은 아이가 가장 먼저 배우는 것부터 적는다. 앞에 있는 단어일수록 한글 검색에서 먼저 잡힌다.
+   ========================================================= */
+const KIDS_RAW = `
+a|t=하나의|I have a dog.|나는 개 한 마리가 있어요.
+an|t=하나의|I eat an apple.|나는 사과 하나를 먹어요.
+the|t=그|The sun is hot.|해는 뜨거워요.
+I|r=나|I am happy.|나는 행복해요.
+you|r=너, 당신|You are kind.|너는 친절해.
+he|r=그 (남자)|He is my dad.|그는 우리 아빠예요.
+she|r=그녀|She is my mom.|그녀는 우리 엄마예요.
+it|r=그것|It is a cat.|그것은 고양이예요.
+we|r=우리|We are friends.|우리는 친구예요.
+they|r=그들|They play together.|그들은 함께 놀아요.
+me|r=나를, 나에게|Help me, please.|나를 도와주세요.
+my|t=나의|This is my bag.|이것은 내 가방이에요.
+your|t=너의|What is your name?|네 이름은 뭐니?
+his|t=그의|His hat is blue.|그의 모자는 파란색이에요.
+her|t=그녀의|Her dog is cute.|그녀의 개는 귀여워요.
+its|t=그것의|The cat licks its paw.|고양이가 자기 발을 핥아요.
+our|t=우리의|This is our school.|이곳은 우리 학교예요.
+their|t=그들의|Their house is big.|그들의 집은 커요.
+him|r=그를, 그에게|I like him.|나는 그를 좋아해요.
+us|r=우리를, 우리에게|Come with us.|우리와 함께 가자.
+them|r=그들을, 그것들을|I see them.|나는 그들이 보여요.
+mine|r=나의 것|This book is mine.|이 책은 내 거예요.
+this|r=이것;t=이|This is my pen.|이것은 내 펜이에요.
+that|r=저것;t=저|That is a bird.|저것은 새예요.
+these|r=이것들;t=이|These are my shoes.|이것들은 내 신발이에요.
+those|r=저것들;t=저|Those are stars.|저것들은 별이에요.
+be|v=~이다, 있다|I want to be a doctor.|나는 의사가 되고 싶어요.
+am|v=~이다 (I와 함께)|I am seven.|나는 일곱 살이에요.
+is|v=~이다, 있다|She is tall.|그녀는 키가 커요.
+are|v=~이다, 있다|We are happy.|우리는 행복해요.
+do|v=하다|I do my homework.|나는 숙제를 해요.
+have|v=가지고 있다;v=먹다|I have a ball.|나는 공을 가지고 있어요.
+has|v=가지고 있다 (he, she, it과 함께)|He has a bike.|그는 자전거가 있어요.
+can|v=~할 수 있다;n=깡통, 캔|I can swim.|나는 수영할 수 있어요.
+will|v=~할 것이다|I will help you.|내가 너를 도와줄게.
+must|v=~해야 한다|You must stop.|너는 멈춰야 해.
+should|v=~하는 게 좋다|You should sleep.|너는 자는 게 좋겠어.
+may|v=~해도 된다;n=5월 (May)|May I come in?|들어가도 될까요?
+not|d=~아니다, ~않다|I am not sad.|나는 슬프지 않아요.
+yes|i=네, 응|Yes, I can.|네, 할 수 있어요.
+no|i=아니요;t=하나도 없는|No, thank you.|아니요, 괜찮아요.
+okay|i=좋아, 괜찮아|Okay, let's go.|좋아, 가자.
+hello|i=안녕, 안녕하세요|Hello, Mina!|안녕, 미나!|👋
+hi|i=안녕|Hi, how are you?|안녕, 잘 지내니?|👋
+bye|i=안녕, 잘 가|Bye, see you!|안녕, 또 봐!|👋
+goodbye|i=안녕히 가세요|Goodbye, teacher.|선생님, 안녕히 계세요.|👋
+please|i=부탁해요, 제발|Sit down, please.|앉아 주세요.
+thank|v=고마워하다|Thank you very much.|정말 고맙습니다.|🙏
+thanks|i=고마워|Thanks, Tom.|고마워, 톰.|🙏
+sorry|a=미안한|I am sorry.|미안해요.
+welcome|i=환영해요|Welcome to my house.|우리 집에 온 걸 환영해.
+excuse|v=용서하다, 봐주다|Excuse me.|실례합니다.
+and|c=그리고, ~와|I like cats and dogs.|나는 고양이와 개를 좋아해요.
+but|c=하지만, 그러나|It is small but heavy.|그것은 작지만 무거워요.
+or|c=또는, 아니면|Milk or juice?|우유 아니면 주스?
+so|c=그래서;d=아주, 정말|I am so happy.|나는 정말 행복해요.
+because|c=왜냐하면, ~때문에|I am happy because it is sunny.|날씨가 맑아서 나는 기뻐요.
+if|c=만약 ~라면|If it rains, I stay home.|비가 오면 나는 집에 있어요.
+as|c=~처럼, ~만큼|He is as tall as me.|그는 나만큼 키가 커요.
+than|c=~보다|I am taller than you.|내가 너보다 키가 커.
+what|r=무엇|What is this?|이것은 무엇이니?
+who|r=누구|Who is she?|그녀는 누구니?
+where|d=어디에|Where is my bag?|내 가방은 어디 있어?
+when|d=언제|When is your birthday?|네 생일은 언제니?
+why|d=왜|Why are you sad?|너는 왜 슬프니?
+how|d=어떻게, 얼마나|How are you?|어떻게 지내니?
+which|r=어느 것;t=어느|Which do you like?|어느 것이 좋니?
+whose|r=누구의|Whose bag is this?|이것은 누구의 가방이니?
+in|p=~안에|The cat is in the box.|고양이가 상자 안에 있어요.
+on|p=~위에|The book is on the desk.|책이 책상 위에 있어요.
+under|p=~아래에|The dog is under the table.|개가 탁자 아래에 있어요.
+at|p=~에, ~에서|I am at school.|나는 학교에 있어요.
+to|p=~로, ~에게|I go to school.|나는 학교에 가요.
+from|p=~에서, ~로부터|I am from Korea.|나는 한국에서 왔어요.
+with|p=~와 함께|I play with my friend.|나는 친구와 함께 놀아요.
+for|p=~를 위해|This is for you.|이것은 너를 위한 거야.
+of|p=~의|A cup of water.|물 한 컵.
+by|p=~옆에;p=~을 타고|I go by bus.|나는 버스를 타고 가요.
+about|p=~에 대하여;d=약, 대략|A book about dogs.|개에 대한 책.
+after|p=~후에|After school, I play.|학교가 끝난 후에 나는 놀아요.
+before|p=~전에|Wash your hands before lunch.|점심 먹기 전에 손을 씻어요.
+behind|p=~뒤에|The cat is behind the door.|고양이가 문 뒤에 있어요.
+between|p=~사이에|I sit between Mom and Dad.|나는 엄마와 아빠 사이에 앉아요.
+near|p=~가까이에;a=가까운|My house is near the park.|우리 집은 공원 가까이에 있어요.
+next|a=다음의|See you next week.|다음 주에 만나.
+into|p=~안으로|The frog jumps into the water.|개구리가 물속으로 뛰어들어요.
+over|p=~위로, ~너머|The bird flies over the tree.|새가 나무 위로 날아요.
+around|p=~주위에|We sit around the table.|우리는 탁자 주위에 앉아요.
+up|d=위로|Stand up, please.|일어서 주세요.|⬆️
+down|d=아래로|Sit down, please.|앉아 주세요.|⬇️
+out|d=밖으로|Let's go out.|밖으로 나가자.
+off|d=떨어져서, 꺼져서|Turn off the light.|불을 꺼요.
+here|d=여기에|Come here.|여기로 와.
+there|d=거기에, 저기에|My bag is there.|내 가방은 저기에 있어요.
+now|d=지금|I am busy now.|나는 지금 바빠요.
+then|d=그때, 그다음에|Wash your hands, then eat.|손을 씻고, 그다음에 먹어요.
+today|n=오늘|Today is Monday.|오늘은 월요일이에요.
+tomorrow|n=내일|See you tomorrow.|내일 만나.
+yesterday|n=어제|Yesterday was fun.|어제는 재미있었어요.
+again|d=다시, 또|Say it again.|다시 말해 봐.
+always|d=항상, 언제나|I always brush my teeth.|나는 항상 이를 닦아요.
+often|d=자주|I often read books.|나는 자주 책을 읽어요.
+sometimes|d=가끔, 때때로|Sometimes I cook.|나는 가끔 요리해요.
+never|d=절대 ~않다|I never tell lies.|나는 절대 거짓말하지 않아요.
+very|d=매우, 아주|It is very big.|그것은 아주 커요.
+too|d=~도 또한;d=너무|I like it, too.|나도 그것을 좋아해요.
+also|d=또한, ~도|I also like milk.|나도 우유를 좋아해요.
+only|d=오직, ~만|I have only one.|나는 하나만 있어요.
+just|d=그냥, 방금|I just got home.|나는 방금 집에 왔어요.
+really|d=정말로|It is really fun.|정말 재미있어요.
+together|d=함께, 같이|Let's play together.|같이 놀자.
+well|d=잘|She sings well.|그녀는 노래를 잘해요.
+soon|d=곧|See you soon.|곧 만나.
+early|d=일찍;a=이른|I get up early.|나는 일찍 일어나요.
+late|a=늦은;d=늦게|I am late for school.|나는 학교에 늦었어요.
+away|d=멀리, 떨어져|Go away, bug!|저리 가, 벌레야!
+back|d=뒤로, 다시;n=등, 뒤|Come back home.|집으로 돌아와.
+all|t=모든|All my friends are here.|내 친구들이 모두 여기 있어요.
+some|t=조금의, 몇몇의|I want some water.|물을 좀 마시고 싶어요.
+any|t=어떤, 조금도|Do you have any pets?|너는 애완동물이 있니?
+many|t=많은 (셀 수 있는 것)|I have many books.|나는 책이 많아요.
+much|t=많은 (셀 수 없는 것)|How much is it?|그것은 얼마예요?
+more|t=더 많은;d=더|I want more milk.|우유를 더 마시고 싶어요.
+every|t=모든, ~마다|I run every day.|나는 매일 달려요.
+each|t=각각의|Each child has a book.|아이들은 저마다 책이 있어요.
+other|a=다른|Show me the other one.|다른 것을 보여 주세요.
+same|a=같은|We are in the same class.|우리는 같은 반이에요.
+different|a=다른|We like different colors.|우리는 서로 다른 색을 좋아해요.
+one|m=하나, 1|I have one sister.|나는 여동생이 한 명 있어요.|1️⃣
+two|m=둘, 2|I have two hands.|나는 손이 두 개 있어요.|2️⃣
+three|m=셋, 3|Three little pigs.|아기 돼지 세 마리.|3️⃣
+four|m=넷, 4|A dog has four legs.|개는 다리가 네 개예요.|4️⃣
+five|m=다섯, 5|I have five fingers.|나는 손가락이 다섯 개예요.|5️⃣
+six|m=여섯, 6|I get up at six.|나는 여섯 시에 일어나요.|6️⃣
+seven|m=일곱, 7|There are seven days in a week.|일주일은 7일이에요.|7️⃣
+eight|m=여덟, 8|I am eight years old.|나는 여덟 살이에요.|8️⃣
+nine|m=아홉, 9|I go to bed at nine.|나는 아홉 시에 자요.|9️⃣
+ten|m=열, 10|I can count to ten.|나는 열까지 셀 수 있어요.|🔟
+eleven|m=열하나, 11|It is eleven o'clock.|열한 시예요.
+twelve|m=열둘, 12|There are twelve months.|열두 달이 있어요.
+thirteen|m=열셋, 13|My brother is thirteen.|우리 형은 열세 살이에요.
+fifteen|m=열다섯, 15|I have fifteen stickers.|나는 스티커가 열다섯 장 있어요.
+twenty|m=스물, 20|I have twenty crayons.|나는 크레파스가 스무 개 있어요.
+thirty|m=서른, 30|Thirty children are here.|어린이 서른 명이 여기 있어요.
+forty|m=마흔, 40|My dad is forty.|우리 아빠는 마흔 살이에요.
+fifty|m=쉰, 50|It is fifty won.|그것은 50원이에요.
+hundred|m=백, 100|One hundred people came.|백 명이 왔어요.|💯
+thousand|m=천, 1000|It is one thousand won.|그것은 천 원이에요.
+zero|m=영, 0|Two minus two is zero.|2 빼기 2는 0이에요.|0️⃣
+first|a=첫 번째의|I am the first.|내가 첫 번째예요.|🥇
+second|a=두 번째의;n=초 (시간)|He is the second.|그가 두 번째예요.|🥈
+third|a=세 번째의|I am in the third grade.|나는 3학년이에요.|🥉
+last|a=마지막의;a=지난|This is the last one.|이것이 마지막이에요.
+half|n=반, 절반|Half of the cake is mine.|케이크의 반은 내 거예요.
+number|n=수, 숫자, 번호|What is your number?|네 번호는 뭐니?|🔢
+family|n=가족|I love my family.|나는 우리 가족을 사랑해요.|👨‍👩‍👧
+mother|n=어머니|My mother is kind.|우리 어머니는 친절해요.|👩
+father|n=아버지|My father is tall.|우리 아버지는 키가 커요.|👨
+mom|n=엄마|Mom, I am home!|엄마, 저 왔어요!|👩
+dad|n=아빠|Dad cooks dinner.|아빠가 저녁을 요리해요.|👨
+parent|n=부모|My parents love me.|부모님은 나를 사랑해요.
+brother|n=형, 오빠, 남동생|My brother is five.|내 남동생은 다섯 살이에요.|👦
+sister|n=언니, 누나, 여동생|My sister sings well.|우리 언니는 노래를 잘해요.|👧
+grandmother|n=할머니|My grandmother tells stories.|할머니는 이야기를 해 주세요.|👵
+grandfather|n=할아버지|My grandfather likes fishing.|할아버지는 낚시를 좋아해요.|👴
+grandma|n=할머니|I visit my grandma.|나는 할머니 댁에 가요.|👵
+grandpa|n=할아버지|Grandpa is funny.|할아버지는 재미있어요.|👴
+uncle|n=삼촌, 이모부, 고모부|My uncle has a car.|우리 삼촌은 차가 있어요.
+aunt|n=이모, 고모, 숙모|My aunt makes cookies.|우리 이모는 쿠키를 만들어요.
+cousin|n=사촌|My cousin is my friend.|내 사촌은 내 친구예요.
+son|n=아들|He is her son.|그는 그녀의 아들이에요.
+daughter|n=딸|She is his daughter.|그녀는 그의 딸이에요.
+baby|n=아기|The baby is sleeping.|아기가 자고 있어요.|👶
+child|n=아이, 어린이|The child is playing.|아이가 놀고 있어요.|🧒
+kid|n=아이|The kids are happy.|아이들이 행복해요.|🧒
+boy|n=남자아이, 소년|The boy runs fast.|그 남자아이는 빨리 달려요.|👦
+girl|n=여자아이, 소녀|The girl is reading.|그 여자아이는 책을 읽고 있어요.|👧
+man|n=남자, 어른 남자|The man is a cook.|그 남자는 요리사예요.|👨
+woman|n=여자, 어른 여자|The woman is a doctor.|그 여자는 의사예요.|👩
+people|n=사람들|Many people are here.|많은 사람들이 여기 있어요.|👥
+person|n=사람|She is a nice person.|그녀는 좋은 사람이에요.|🧑
+friend|n=친구|Tom is my friend.|톰은 내 친구예요.|🧒
+name|n=이름|My name is Jina.|내 이름은 지나예요.
+age|n=나이|What is your age?|너는 몇 살이니?
+birthday|n=생일|Happy birthday!|생일 축하해!|🎂
+king|n=왕|The king has a crown.|왕은 왕관이 있어요.|🤴
+queen|n=여왕, 왕비|The queen is kind.|여왕은 친절해요.|👸
+prince|n=왕자|The prince rides a horse.|왕자가 말을 타요.|🤴
+princess|n=공주|The princess sings.|공주가 노래해요.|👸
+teacher|n=선생님|My teacher is nice.|우리 선생님은 좋아요.|👩‍🏫
+student|n=학생|I am a student.|나는 학생이에요.|🧑‍🎓
+doctor|n=의사|The doctor helps sick people.|의사는 아픈 사람들을 도와요.|🧑‍⚕️
+nurse|n=간호사|The nurse is kind.|간호사는 친절해요.|🧑‍⚕️
+cook|n=요리사;v=요리하다|My dad is a good cook.|우리 아빠는 요리를 잘해요.|🧑‍🍳
+police|n=경찰|The police help people.|경찰은 사람들을 도와요.|👮
+firefighter|n=소방관|A firefighter is brave.|소방관은 용감해요.|🧑‍🚒
+farmer|n=농부|The farmer grows rice.|농부는 벼를 길러요.|🧑‍🌾
+driver|n=운전사|The bus driver is kind.|버스 운전사는 친절해요.
+singer|n=가수|She is a singer.|그녀는 가수예요.|🎤
+scientist|n=과학자|I want to be a scientist.|나는 과학자가 되고 싶어요.|🧑‍🔬
+pilot|n=조종사|The pilot flies a plane.|조종사는 비행기를 몰아요.|🧑‍✈️
+artist|n=화가, 예술가|The artist paints a picture.|화가가 그림을 그려요.|🧑‍🎨
+job|n=직업, 일|What is your job?|당신의 직업은 무엇인가요?
+body|n=몸|Move your body.|몸을 움직여 봐.
+head|n=머리|Touch your head.|머리를 만져 봐.
+hair|n=머리카락|She has long hair.|그녀는 머리가 길어요.
+face|n=얼굴|Wash your face.|세수를 해요.|🙂
+eye|n=눈|I have two eyes.|나는 눈이 두 개 있어요.|👁️
+ear|n=귀|Rabbits have long ears.|토끼는 귀가 길어요.|👂
+nose|n=코|My nose is cold.|내 코가 차가워요.|👃
+mouth|n=입|Open your mouth.|입을 벌려 봐.|👄
+tooth|n=이, 이빨|I lost a tooth.|나는 이가 하나 빠졌어요.|🦷
+neck|n=목|A giraffe has a long neck.|기린은 목이 길어요.
+shoulder|n=어깨|Touch your shoulders.|어깨를 만져 봐.
+arm|n=팔|Raise your arms.|팔을 들어 봐.|💪
+hand|n=손|Wash your hands.|손을 씻어요.|✋
+finger|n=손가락|I have ten fingers.|나는 손가락이 열 개예요.|☝️
+leg|n=다리|My legs are tired.|다리가 피곤해요.|🦵
+knee|n=무릎|I hurt my knee.|나는 무릎을 다쳤어요.
+foot|n=발|My foot is small.|내 발은 작아요.|🦶
+toe|n=발가락|I have ten toes.|나는 발가락이 열 개예요.
+heart|n=심장;n=마음|My heart is beating fast.|내 심장이 빨리 뛰어요.|❤️
+stomach|n=배, 위|My stomach hurts.|배가 아파요.
+skin|n=피부|My skin is soft.|내 피부는 부드러워요.
+dog|n=개|The dog is barking.|개가 짖고 있어요.|🐶
+puppy|n=강아지|The puppy is cute.|강아지가 귀여워요.|🐶
+cat|n=고양이|The cat is sleeping.|고양이가 자고 있어요.|🐱
+kitten|n=새끼 고양이|The kitten drinks milk.|새끼 고양이가 우유를 마셔요.|🐱
+bird|n=새|The bird can fly.|새는 날 수 있어요.|🐦
+fish|n=물고기, 생선|Fish live in water.|물고기는 물속에 살아요.|🐟
+rabbit|n=토끼|The rabbit eats carrots.|토끼는 당근을 먹어요.|🐰
+bear|n=곰|The bear is big.|곰은 커요.|🐻
+lion|n=사자|The lion is strong.|사자는 힘이 세요.|🦁
+tiger|n=호랑이|The tiger runs fast.|호랑이는 빨리 달려요.|🐯
+elephant|n=코끼리|An elephant has a long nose.|코끼리는 코가 길어요.|🐘
+monkey|n=원숭이|The monkey likes bananas.|원숭이는 바나나를 좋아해요.|🐵
+giraffe|n=기린|A giraffe is very tall.|기린은 키가 아주 커요.|🦒
+zebra|n=얼룩말|A zebra has stripes.|얼룩말은 줄무늬가 있어요.|🦓
+horse|n=말|I can ride a horse.|나는 말을 탈 수 있어요.|🐴
+cow|n=소, 젖소|The cow gives us milk.|젖소는 우리에게 우유를 줘요.|🐮
+pig|n=돼지|The pig is pink.|돼지는 분홍색이에요.|🐷
+sheep|n=양|The sheep is white.|양은 하얀색이에요.|🐑
+goat|n=염소|The goat eats grass.|염소는 풀을 먹어요.|🐐
+chicken|n=닭;n=닭고기|I like fried chicken.|나는 닭튀김을 좋아해요.|🐔
+duck|n=오리|The duck swims well.|오리는 헤엄을 잘 쳐요.|🦆
+mouse|n=쥐|The mouse is small.|쥐는 작아요.|🐭
+frog|n=개구리|The frog jumps high.|개구리는 높이 뛰어요.|🐸
+snake|n=뱀|The snake is long.|뱀은 길어요.|🐍
+turtle|n=거북|The turtle is slow.|거북은 느려요.|🐢
+fox|n=여우|The fox is clever.|여우는 영리해요.|🦊
+wolf|n=늑대|The wolf howls at night.|늑대는 밤에 울어요.|🐺
+deer|n=사슴|The deer runs in the forest.|사슴이 숲에서 달려요.|🦌
+panda|n=판다|The panda eats bamboo.|판다는 대나무를 먹어요.|🐼
+kangaroo|n=캥거루|A kangaroo jumps far.|캥거루는 멀리 뛰어요.|🦘
+penguin|n=펭귄|Penguins cannot fly.|펭귄은 날지 못해요.|🐧
+dolphin|n=돌고래|The dolphin is smart.|돌고래는 똑똑해요.|🐬
+whale|n=고래|A whale is very big.|고래는 아주 커요.|🐳
+shark|n=상어|A shark has sharp teeth.|상어는 이빨이 날카로워요.|🦈
+dinosaur|n=공룡|I like dinosaurs.|나는 공룡을 좋아해요.|🦖
+bee|n=벌|The bee makes honey.|벌은 꿀을 만들어요.|🐝
+butterfly|n=나비|The butterfly is pretty.|나비가 예뻐요.|🦋
+ant|n=개미|The ant is tiny.|개미는 아주 작아요.|🐜
+spider|n=거미|The spider has eight legs.|거미는 다리가 여덟 개예요.|🕷️
+bug|n=벌레|There is a bug on the leaf.|잎 위에 벌레가 있어요.|🐛
+animal|n=동물|I love animals.|나는 동물을 사랑해요.|🐾
+pet|n=애완동물|My pet is a hamster.|내 애완동물은 햄스터예요.|🐹
+zoo|n=동물원|We go to the zoo.|우리는 동물원에 가요.|🦁
+farm|n=농장|Cows live on a farm.|소는 농장에 살아요.|🚜
+tail|n=꼬리|The dog wags its tail.|개가 꼬리를 흔들어요.
+wing|n=날개|A bird has two wings.|새는 날개가 두 개예요.
+egg|n=달걀, 알|I eat an egg.|나는 달걀을 먹어요.|🥚
+food|n=음식|I like Korean food.|나는 한국 음식을 좋아해요.|🍽️
+apple|n=사과|I eat an apple.|나는 사과를 먹어요.|🍎
+banana|n=바나나|Monkeys like bananas.|원숭이는 바나나를 좋아해요.|🍌
+orange|n=오렌지;n=주황색|This orange is sweet.|이 오렌지는 달아요.|🍊
+grape|n=포도|I like grapes.|나는 포도를 좋아해요.|🍇
+strawberry|n=딸기|The strawberry is red.|딸기는 빨개요.|🍓
+watermelon|n=수박|Watermelon is my favorite.|나는 수박이 제일 좋아요.|🍉
+peach|n=복숭아|The peach is soft.|복숭아는 말랑해요.|🍑
+pear|n=배 (과일)|The pear is sweet.|배는 달아요.|🍐
+lemon|n=레몬|A lemon is sour.|레몬은 셔요.|🍋
+tomato|n=토마토|The tomato is red.|토마토는 빨개요.|🍅
+potato|n=감자|I like potato chips.|나는 감자칩을 좋아해요.|🥔
+carrot|n=당근|Rabbits like carrots.|토끼는 당근을 좋아해요.|🥕
+onion|n=양파|I cut an onion.|나는 양파를 썰어요.|🧅
+corn|n=옥수수|Corn is yellow.|옥수수는 노란색이에요.|🌽
+bean|n=콩|I eat beans.|나는 콩을 먹어요.
+fruit|n=과일|Fruit is good for you.|과일은 몸에 좋아요.|🍎
+vegetable|n=채소|Eat your vegetables.|채소를 먹어요.|🥦
+rice|n=쌀, 밥|I eat rice every day.|나는 매일 밥을 먹어요.|🍚
+bread|n=빵|I eat bread for breakfast.|나는 아침으로 빵을 먹어요.|🍞
+noodle|n=국수|I like noodles.|나는 국수를 좋아해요.|🍜
+soup|n=국, 수프|The soup is hot.|국이 뜨거워요.|🥣
+meat|n=고기|I like meat.|나는 고기를 좋아해요.|🍖
+cheese|n=치즈|Mice like cheese.|쥐는 치즈를 좋아해요.|🧀
+butter|n=버터|I put butter on bread.|나는 빵에 버터를 발라요.|🧈
+salad|n=샐러드|I eat salad for lunch.|나는 점심으로 샐러드를 먹어요.|🥗
+sandwich|n=샌드위치|I make a sandwich.|나는 샌드위치를 만들어요.|🥪
+pizza|n=피자|Pizza is yummy.|피자는 맛있어요.|🍕
+hamburger|n=햄버거|I want a hamburger.|나는 햄버거를 먹고 싶어요.|🍔
+cake|n=케이크|The cake is sweet.|케이크는 달아요.|🍰
+cookie|n=쿠키, 과자|I bake cookies.|나는 쿠키를 구워요.|🍪
+candy|n=사탕|I like candy.|나는 사탕을 좋아해요.|🍬
+chocolate|n=초콜릿|Chocolate is sweet.|초콜릿은 달아요.|🍫
+ice cream|n=아이스크림|I want ice cream.|나는 아이스크림을 먹고 싶어요.|🍦
+sugar|n=설탕|Sugar is sweet.|설탕은 달아요.
+salt|n=소금|Pass me the salt.|소금 좀 건네주세요.|🧂
+honey|n=꿀|Bears like honey.|곰은 꿀을 좋아해요.|🍯
+water|n=물;v=물을 주다|I drink water.|나는 물을 마셔요.|💧
+milk|n=우유|I drink milk every morning.|나는 매일 아침 우유를 마셔요.|🥛
+juice|n=주스|I like orange juice.|나는 오렌지 주스를 좋아해요.|🧃
+tea|n=차 (마시는 것)|Mom drinks tea.|엄마는 차를 마셔요.|🍵
+breakfast|n=아침 식사|I eat breakfast at seven.|나는 일곱 시에 아침을 먹어요.|🍳
+lunch|n=점심 식사|It is time for lunch.|점심 먹을 시간이에요.|🍱
+dinner|n=저녁 식사|We eat dinner together.|우리는 함께 저녁을 먹어요.|🍽️
+snack|n=간식|I want a snack.|나는 간식을 먹고 싶어요.|🍿
+cup|n=컵|A cup of milk, please.|우유 한 컵 주세요.|🥤
+glass|n=유리;n=유리컵|A glass of water.|물 한 잔.|🥛
+bottle|n=병|This is a water bottle.|이것은 물병이에요.|🍼
+dish|n=접시;n=요리|I wash the dishes.|나는 설거지를 해요.|🍽️
+bowl|n=그릇|A bowl of rice.|밥 한 그릇.|🥣
+spoon|n=숟가락|I eat soup with a spoon.|나는 숟가락으로 국을 먹어요.|🥄
+fork|n=포크|I use a fork.|나는 포크를 써요.|🍴
+knife|n=칼|Be careful with the knife.|칼을 조심해요.|🔪
+chopsticks|n=젓가락|I can use chopsticks.|나는 젓가락을 쓸 수 있어요.|🥢
+school|n=학교|I go to school.|나는 학교에 가요.|🏫
+class|n=반, 학급;n=수업|We are in the same class.|우리는 같은 반이에요.
+classroom|n=교실|Our classroom is clean.|우리 교실은 깨끗해요.
+book|n=책|I read a book.|나는 책을 읽어요.|📗
+notebook|n=공책|I write in my notebook.|나는 공책에 써요.|📓
+pencil|n=연필|I need a pencil.|나는 연필이 필요해요.|✏️
+pen|n=펜|This is my pen.|이것은 내 펜이에요.|🖊️
+eraser|n=지우개|Can I use your eraser?|네 지우개를 써도 되니?
+ruler|n=자|I draw a line with a ruler.|나는 자로 선을 그어요.|📏
+crayon|n=크레파스|I color with crayons.|나는 크레파스로 색칠해요.|🖍️
+scissors|n=가위|I cut paper with scissors.|나는 가위로 종이를 잘라요.|✂️
+glue|n=풀 (붙이는 것)|I need some glue.|나는 풀이 필요해요.
+paper|n=종이|I draw on paper.|나는 종이에 그림을 그려요.|📄
+bag|n=가방|My bag is heavy.|내 가방은 무거워요.|🎒
+desk|n=책상|My book is on the desk.|내 책은 책상 위에 있어요.
+chair|n=의자|Sit on the chair.|의자에 앉아요.|🪑
+board|n=칠판, 판|Look at the board.|칠판을 봐요.
+homework|n=숙제|I do my homework.|나는 숙제를 해요.|📝
+test|n=시험|I have a test today.|나는 오늘 시험이 있어요.
+lesson|n=수업, 배움|The lesson is fun.|수업이 재미있어요.
+question|n=질문, 문제|I have a question.|질문이 있어요.|❓
+answer|n=대답, 답;v=대답하다|I know the answer.|나는 답을 알아요.
+word|n=단어, 낱말|I learn new words.|나는 새 단어를 배워요.
+letter|n=편지;n=글자|I write a letter.|나는 편지를 써요.|✉️
+story|n=이야기|Tell me a story.|이야기를 들려주세요.|📖
+page|n=쪽, 페이지|Open your book to page ten.|책 10쪽을 펴세요.
+picture|n=그림, 사진|I draw a picture.|나는 그림을 그려요.|🖼️
+color|n=색, 색깔;v=색칠하다|What color is it?|그것은 무슨 색이니?|🎨
+math|n=수학|I like math.|나는 수학을 좋아해요.|➕
+science|n=과학|Science is fun.|과학은 재미있어요.|🔬
+music|n=음악|I listen to music.|나는 음악을 들어요.|🎵
+art|n=미술, 예술|I have art class today.|나는 오늘 미술 수업이 있어요.|🎨
+English|n=영어|I study English.|나는 영어를 공부해요.
+Korean|n=한국어, 한국 사람;a=한국의|I speak Korean.|나는 한국어를 말해요.
+Korea|n=한국|I live in Korea.|나는 한국에 살아요.|🇰🇷
+library|n=도서관|I read books at the library.|나는 도서관에서 책을 읽어요.|📚
+playground|n=놀이터, 운동장|We play in the playground.|우리는 놀이터에서 놀아요.|🛝
+grade|n=학년;n=성적|I am in the second grade.|나는 2학년이에요.
+red|a=빨간;n=빨간색|The apple is red.|사과는 빨개요.|🔴
+blue|a=파란;n=파란색|The sky is blue.|하늘은 파래요.|🔵
+yellow|a=노란;n=노란색|The banana is yellow.|바나나는 노란색이에요.|🟡
+green|a=초록색의;n=초록색|The grass is green.|풀은 초록색이에요.|🟢
+black|a=검은;n=검은색|My hair is black.|내 머리카락은 검은색이에요.|⚫
+white|a=하얀;n=하얀색|Snow is white.|눈은 하얘요.|⚪
+pink|a=분홍색의;n=분홍색|I like pink.|나는 분홍색을 좋아해요.|🌸
+purple|a=보라색의;n=보라색|Grapes are purple.|포도는 보라색이에요.|🟣
+brown|a=갈색의;n=갈색|The bear is brown.|곰은 갈색이에요.|🟤
+gray|a=회색의;n=회색|The elephant is gray.|코끼리는 회색이에요.
+gold|n=금, 금색|The ring is gold.|반지는 금색이에요.
+silver|n=은, 은색|I got a silver medal.|나는 은메달을 받았어요.
+house|n=집|My house is small.|우리 집은 작아요.|🏠
+home|n=집, 가정;d=집에|I go home.|나는 집에 가요.|🏠
+room|n=방|This is my room.|이곳은 내 방이에요.
+bedroom|n=침실|I sleep in my bedroom.|나는 내 침실에서 자요.|🛏️
+kitchen|n=부엌|Mom is in the kitchen.|엄마는 부엌에 있어요.
+bathroom|n=화장실, 욕실|Where is the bathroom?|화장실이 어디예요?|🚽
+living room|n=거실|We watch TV in the living room.|우리는 거실에서 텔레비전을 봐요.
+door|n=문|Open the door, please.|문을 열어 주세요.|🚪
+window|n=창문|Close the window.|창문을 닫아요.|🪟
+wall|n=벽|A picture is on the wall.|벽에 그림이 있어요.
+floor|n=바닥;n=층|Sit on the floor.|바닥에 앉아요.
+roof|n=지붕|A bird is on the roof.|새가 지붕 위에 있어요.
+garden|n=정원|Flowers grow in the garden.|정원에 꽃이 자라요.|🌷
+table|n=탁자, 식탁|Dinner is on the table.|저녁이 식탁 위에 있어요.
+bed|n=침대|I go to bed at nine.|나는 아홉 시에 자러 가요.|🛏️
+sofa|n=소파|I sit on the sofa.|나는 소파에 앉아요.|🛋️
+lamp|n=등, 전등|Turn on the lamp.|등을 켜요.|💡
+light|n=빛, 불;a=가벼운|Turn off the light.|불을 꺼요.|💡
+clock|n=시계|Look at the clock.|시계를 봐요.|🕒
+watch|v=보다, 지켜보다;n=손목시계|I watch TV.|나는 텔레비전을 봐요.|⌚
+mirror|n=거울|I look in the mirror.|나는 거울을 봐요.|🪞
+box|n=상자|What is in the box?|상자 안에 무엇이 있니?|📦
+key|n=열쇠|I lost my key.|나는 열쇠를 잃어버렸어요.|🔑
+phone|n=전화기|Dad is on the phone.|아빠는 통화 중이에요.|📱
+computer|n=컴퓨터|I use a computer.|나는 컴퓨터를 써요.|💻
+television|n=텔레비전|We watch television.|우리는 텔레비전을 봐요.|📺
+TV|n=텔레비전|I watch TV after dinner.|나는 저녁을 먹고 텔레비전을 봐요.|📺
+camera|n=카메라, 사진기|I have a camera.|나는 카메라가 있어요.|📷
+umbrella|n=우산|Take your umbrella.|우산을 가져가요.|☂️
+towel|n=수건|I need a towel.|나는 수건이 필요해요.
+soap|n=비누|Wash your hands with soap.|비누로 손을 씻어요.|🧼
+toothbrush|n=칫솔|This is my toothbrush.|이것은 내 칫솔이에요.|🪥
+basket|n=바구니|Apples are in the basket.|사과가 바구니에 있어요.|🧺
+toy|n=장난감|I play with my toys.|나는 장난감을 가지고 놀아요.|🧸
+doll|n=인형|This is my doll.|이것은 내 인형이에요.|🪆
+robot|n=로봇|I made a robot.|나는 로봇을 만들었어요.|🤖
+ball|n=공|Kick the ball!|공을 차!|⚽
+balloon|n=풍선|I have a red balloon.|나는 빨간 풍선이 있어요.|🎈
+kite|n=연|I fly a kite.|나는 연을 날려요.|🪁
+gift|n=선물|This gift is for you.|이 선물은 너를 위한 거야.|🎁
+present|n=선물|I got a birthday present.|나는 생일 선물을 받았어요.|🎁
+money|n=돈|I save money.|나는 돈을 모아요.|💰
+clothes|n=옷|I put on my clothes.|나는 옷을 입어요.|👕
+shirt|n=셔츠|I wear a white shirt.|나는 하얀 셔츠를 입어요.|👕
+pants|n=바지|My pants are blue.|내 바지는 파란색이에요.|👖
+skirt|n=치마|She wears a skirt.|그녀는 치마를 입어요.
+dress|n=원피스, 드레스|The dress is pretty.|그 원피스는 예뻐요.|👗
+jacket|n=재킷, 겉옷|Put on your jacket.|겉옷을 입어요.|🧥
+coat|n=코트, 외투|I wear a coat in winter.|나는 겨울에 외투를 입어요.|🧥
+sweater|n=스웨터|This sweater is warm.|이 스웨터는 따뜻해요.
+hat|n=모자|I wear a hat.|나는 모자를 써요.|🧢
+cap|n=야구 모자|He wears a cap.|그는 야구 모자를 써요.|🧢
+shoe|n=신발|Put on your shoes.|신발을 신어요.|👟
+shoes|n=신발|My shoes are new.|내 신발은 새것이에요.|👟
+sock|n=양말|I wear socks.|나는 양말을 신어요.|🧦
+socks|n=양말|My socks are warm.|내 양말은 따뜻해요.|🧦
+boots|n=장화, 부츠|I wear boots in the rain.|나는 비 올 때 장화를 신어요.|👢
+gloves|n=장갑|I wear gloves in winter.|나는 겨울에 장갑을 껴요.|🧤
+glasses|n=안경|My dad wears glasses.|우리 아빠는 안경을 써요.|👓
+pocket|n=주머니|A coin is in my pocket.|내 주머니에 동전이 있어요.
+button|n=단추;n=버튼|Push the button.|버튼을 눌러요.
+ring|n=반지;v=울리다|The ring is pretty.|반지가 예뻐요.|💍
+sun|n=해, 태양|The sun is hot.|해는 뜨거워요.|☀️
+moon|n=달|The moon is bright.|달이 밝아요.|🌙
+star|n=별|I see many stars.|나는 별이 많이 보여요.|⭐
+sky|n=하늘|The sky is blue.|하늘은 파래요.
+cloud|n=구름|The cloud is white.|구름은 하얘요.|☁️
+rain|n=비;v=비가 오다|I like rain.|나는 비를 좋아해요.|🌧️
+snow|n=눈 (하늘에서 내리는);v=눈이 오다|Snow is white.|눈은 하얘요.|❄️
+wind|n=바람|The wind is strong.|바람이 세요.|🌬️
+rainbow|n=무지개|I see a rainbow.|무지개가 보여요.|🌈
+weather|n=날씨|How is the weather?|날씨가 어떠니?
+sunny|a=맑은, 해가 나는|It is sunny today.|오늘은 날씨가 맑아요.|☀️
+rainy|a=비가 오는|It is rainy today.|오늘은 비가 와요.|🌧️
+cloudy|a=흐린, 구름 낀|It is cloudy today.|오늘은 흐려요.|☁️
+windy|a=바람이 부는|It is windy today.|오늘은 바람이 불어요.|🌬️
+snowy|a=눈이 오는|It is snowy today.|오늘은 눈이 와요.|❄️
+hot|a=더운, 뜨거운|It is hot today.|오늘은 더워요.|🥵
+cold|a=추운, 차가운;n=감기|It is cold today.|오늘은 추워요.|🥶
+warm|a=따뜻한|The soup is warm.|국이 따뜻해요.
+cool|a=시원한;a=멋진|The wind is cool.|바람이 시원해요.
+tree|n=나무|The tree is tall.|나무가 키가 커요.|🌳
+flower|n=꽃|The flower is pretty.|꽃이 예뻐요.|🌸
+rose|n=장미|The rose smells good.|장미는 냄새가 좋아요.|🌹
+grass|n=풀, 잔디|The grass is green.|풀은 초록색이에요.
+leaf|n=잎, 나뭇잎|The leaf is green.|나뭇잎은 초록색이에요.|🍃
+seed|n=씨, 씨앗|I plant a seed.|나는 씨앗을 심어요.|🌱
+plant|n=식물;v=심다|This plant needs water.|이 식물은 물이 필요해요.|🪴
+forest|n=숲|Animals live in the forest.|동물들은 숲에 살아요.|🌲
+mountain|n=산|The mountain is high.|산이 높아요.|⛰️
+hill|n=언덕|We run up the hill.|우리는 언덕 위로 달려요.
+river|n=강|Fish swim in the river.|물고기가 강에서 헤엄쳐요.
+lake|n=호수|The lake is big.|호수가 커요.
+sea|n=바다|I swim in the sea.|나는 바다에서 수영해요.|🌊
+ocean|n=큰 바다, 대양|Whales live in the ocean.|고래는 바다에 살아요.|🌊
+beach|n=바닷가, 해변|We play on the beach.|우리는 바닷가에서 놀아요.|🏖️
+island|n=섬|Jeju is an island.|제주는 섬이에요.|🏝️
+sand|n=모래|I play with sand.|나는 모래를 가지고 놀아요.
+rock|n=바위, 돌|The rock is hard.|바위는 단단해요.|🪨
+stone|n=돌|I throw a stone.|나는 돌을 던져요.
+fire|n=불|Fire is hot.|불은 뜨거워요.|🔥
+air|n=공기|The air is fresh.|공기가 맑아요.
+earth|n=지구;n=땅, 흙|We live on the earth.|우리는 지구에 살아요.|🌍
+world|n=세계, 세상|The world is big.|세상은 넓어요.|🌍
+space|n=우주;n=공간|Rockets fly into space.|로켓은 우주로 날아가요.|🚀
+land|n=땅, 육지|Lions live on land.|사자는 땅 위에 살아요.
+field|n=들판, 밭|Cows are in the field.|소들이 들판에 있어요.
+nature|n=자연|I love nature.|나는 자연을 사랑해요.
+spring|n=봄|Flowers bloom in spring.|봄에는 꽃이 피어요.|🌸
+summer|n=여름|Summer is hot.|여름은 더워요.|🌞
+fall|n=가을;v=떨어지다, 넘어지다|Leaves fall in fall.|가을에는 나뭇잎이 떨어져요.|🍂
+autumn|n=가을|Autumn is cool.|가을은 시원해요.|🍂
+winter|n=겨울|Winter is cold.|겨울은 추워요.|⛄
+season|n=계절|There are four seasons.|사계절이 있어요.
+time|n=시간|What time is it?|지금 몇 시니?|⏰
+day|n=하루, 날;n=낮|Have a nice day!|좋은 하루 보내!|🌞
+week|n=주, 일주일|See you next week.|다음 주에 만나.
+month|n=달, 월|There are twelve months.|열두 달이 있어요.
+year|n=해, 년|Happy New Year!|새해 복 많이 받으세요!
+morning|n=아침|Good morning!|좋은 아침이에요!|🌅
+afternoon|n=오후|Good afternoon!|안녕하세요! (오후 인사)
+evening|n=저녁|Good evening!|안녕하세요! (저녁 인사)|🌆
+night|n=밤|Good night!|잘 자요!|🌛
+noon|n=정오, 낮 열두 시|We eat lunch at noon.|우리는 정오에 점심을 먹어요.
+hour|n=한 시간|I read for an hour.|나는 한 시간 동안 책을 읽어요.
+minute|n=분|Wait a minute.|잠깐 기다려.
+o'clock|d=~시 (정각)|It is three o'clock.|세 시예요.|🕒
+weekend|n=주말|I play on the weekend.|나는 주말에 놀아요.
+holiday|n=휴일, 명절|Today is a holiday.|오늘은 쉬는 날이에요.
+vacation|n=방학, 휴가|Summer vacation is fun.|여름 방학은 재미있어요.
+Monday|n=월요일|I go to school on Monday.|나는 월요일에 학교에 가요.
+Tuesday|n=화요일|I have art on Tuesday.|나는 화요일에 미술 수업이 있어요.
+Wednesday|n=수요일|Today is Wednesday.|오늘은 수요일이에요.
+Thursday|n=목요일|I swim on Thursday.|나는 목요일에 수영해요.
+Friday|n=금요일|Friday is fun.|금요일은 즐거워요.
+Saturday|n=토요일|I play on Saturday.|나는 토요일에 놀아요.
+Sunday|n=일요일|I rest on Sunday.|나는 일요일에 쉬어요.
+January|n=1월|January is cold.|1월은 추워요.
+February|n=2월|February is short.|2월은 짧아요.
+April|n=4월|Flowers bloom in April.|4월에는 꽃이 피어요.
+June|n=6월|June is warm.|6월은 따뜻해요.
+July|n=7월|July is hot.|7월은 더워요.
+August|n=8월|We swim in August.|우리는 8월에 수영해요.
+September|n=9월|September is cool.|9월은 시원해요.
+October|n=10월|Leaves fall in October.|10월에는 나뭇잎이 떨어져요.
+November|n=11월|November is chilly.|11월은 쌀쌀해요.
+December|n=12월|Christmas is in December.|크리스마스는 12월에 있어요.
+Christmas|n=크리스마스, 성탄절|Merry Christmas!|메리 크리스마스!|🎄
+party|n=파티, 잔치|Come to my party.|내 파티에 와.|🎉
+city|n=도시|Seoul is a big city.|서울은 큰 도시예요.|🏙️
+town|n=마을, 소도시|I live in a small town.|나는 작은 마을에 살아요.
+village|n=마을, 시골 마을|The village is quiet.|그 마을은 조용해요.
+country|n=나라;n=시골|Korea is my country.|한국은 우리나라예요.
+street|n=거리, 길|Cross the street carefully.|길을 조심해서 건너요.
+road|n=도로, 길|The road is wide.|길이 넓어요.|🛣️
+bridge|n=다리 (건너는)|We cross the bridge.|우리는 다리를 건너요.|🌉
+park|n=공원|I play in the park.|나는 공원에서 놀아요.|🏞️
+store|n=가게|I buy milk at the store.|나는 가게에서 우유를 사요.|🏪
+shop|n=가게;v=물건을 사다|This is a toy shop.|이곳은 장난감 가게예요.|🏪
+market|n=시장|Mom goes to the market.|엄마는 시장에 가요.
+hospital|n=병원|The doctor works in a hospital.|의사는 병원에서 일해요.|🏥
+bank|n=은행|The bank is near here.|은행은 이 근처에 있어요.|🏦
+restaurant|n=식당|We eat at a restaurant.|우리는 식당에서 먹어요.
+museum|n=박물관|We visit the museum.|우리는 박물관에 가요.|🏛️
+church|n=교회|The church is old.|그 교회는 오래됐어요.|⛪
+station|n=역|The train is at the station.|기차가 역에 있어요.|🚉
+airport|n=공항|We go to the airport.|우리는 공항에 가요.|🛫
+building|n=건물|The building is tall.|그 건물은 높아요.|🏢
+place|n=장소, 곳|This is a nice place.|이곳은 좋은 곳이에요.
+car|n=자동차|My dad drives a car.|우리 아빠는 차를 운전해요.|🚗
+bus|n=버스|I go to school by bus.|나는 버스를 타고 학교에 가요.|🚌
+taxi|n=택시|We take a taxi.|우리는 택시를 타요.|🚕
+train|n=기차|The train is fast.|기차는 빨라요.|🚆
+subway|n=지하철|I take the subway.|나는 지하철을 타요.|🚇
+bike|n=자전거|I ride my bike.|나는 자전거를 타요.|🚲
+bicycle|n=자전거|I have a new bicycle.|나는 새 자전거가 있어요.|🚲
+airplane|n=비행기|The airplane flies high.|비행기가 높이 날아요.|✈️
+plane|n=비행기|The plane is in the sky.|비행기가 하늘에 있어요.|✈️
+ship|n=배 (큰 배)|The ship is on the sea.|배가 바다 위에 있어요.|🚢
+boat|n=배 (작은 배)|We ride a boat.|우리는 배를 타요.|⛵
+truck|n=트럭|The truck is big.|트럭은 커요.|🚚
+rocket|n=로켓|The rocket goes to space.|로켓은 우주로 가요.|🚀
+map|n=지도|Look at the map.|지도를 봐요.|🗺️
+ticket|n=표|I have a ticket.|나는 표가 있어요.|🎫
+trip|n=여행|We go on a trip.|우리는 여행을 가요.
+left|n=왼쪽;a=왼쪽의|Turn left.|왼쪽으로 돌아요.|⬅️
+right|n=오른쪽;a=옳은, 맞는|Turn right.|오른쪽으로 돌아요.|➡️
+front|n=앞, 앞쪽|Stand in front of me.|내 앞에 서.
+top|n=꼭대기, 위|We are at the top.|우리는 꼭대기에 있어요.
+bottom|n=맨 아래, 바닥|Look at the bottom.|맨 아래를 봐요.
+side|n=옆, 쪽|Sit by my side.|내 옆에 앉아.
+middle|n=가운데|I am in the middle.|나는 가운데에 있어요.
+corner|n=모퉁이, 구석|The shop is on the corner.|그 가게는 모퉁이에 있어요.
+east|n=동쪽|The sun rises in the east.|해는 동쪽에서 떠요.
+west|n=서쪽|The sun sets in the west.|해는 서쪽으로 져요.
+south|n=남쪽|Birds fly south.|새들이 남쪽으로 날아가요.
+north|n=북쪽|The wind comes from the north.|바람이 북쪽에서 불어와요.
+way|n=길;n=방법|This is the way home.|이것이 집으로 가는 길이에요.
+go|v=가다|I go to school.|나는 학교에 가요.
+come|v=오다|Come here, please.|여기로 와 주세요.
+run|v=달리다|I run fast.|나는 빨리 달려요.|🏃
+walk|v=걷다|I walk to school.|나는 학교에 걸어가요.|🚶
+jump|v=뛰다, 뛰어오르다|I can jump high.|나는 높이 뛸 수 있어요.|🤸
+swim|v=수영하다, 헤엄치다|I can swim.|나는 수영할 수 있어요.|🏊
+fly|v=날다;n=파리|Birds fly in the sky.|새는 하늘을 날아요.
+dance|v=춤추다;n=춤|Let's dance!|춤추자!|💃
+sing|v=노래하다|I sing a song.|나는 노래를 불러요.|🎤
+play|v=놀다;v=(운동, 악기를) 하다|I play with my friends.|나는 친구들과 놀아요.|🧸
+eat|v=먹다|I eat breakfast.|나는 아침을 먹어요.|🍽️
+drink|v=마시다;n=마실 것|I drink milk.|나는 우유를 마셔요.|🥤
+sleep|v=자다|I sleep at night.|나는 밤에 자요.|😴
+wake|v=잠에서 깨다|I wake up at seven.|나는 일곱 시에 일어나요.
+sit|v=앉다|Sit down, please.|앉아 주세요.
+stand|v=서다|Stand up, please.|일어서 주세요.
+see|v=보다|I see a bird.|새가 보여요.|👀
+look|v=보다, 바라보다|Look at me.|나를 봐.|👀
+hear|v=듣다, 들리다|I hear a sound.|소리가 들려요.|👂
+listen|v=귀 기울여 듣다|Listen to the teacher.|선생님 말씀을 잘 들어요.
+say|v=말하다|Say hello.|안녕이라고 말해 봐.
+speak|v=말하다|I speak English.|나는 영어를 말해요.
+talk|v=이야기하다|I talk with my mom.|나는 엄마와 이야기해요.
+tell|v=말해 주다, 알려 주다|Tell me your name.|네 이름을 알려 줘.
+ask|v=묻다, 물어보다|Ask your teacher.|선생님께 여쭤봐.
+read|v=읽다|I read a book.|나는 책을 읽어요.|📖
+write|v=쓰다|I write my name.|나는 내 이름을 써요.|✍️
+draw|v=그리다|I draw a cat.|나는 고양이를 그려요.|🖍️
+paint|v=색칠하다, 물감으로 그리다;n=물감|I paint a picture.|나는 그림을 그려요.|🎨
+study|v=공부하다|I study English.|나는 영어를 공부해요.|📖
+learn|v=배우다|I learn new words.|나는 새 단어를 배워요.
+teach|v=가르치다|She teaches music.|그녀는 음악을 가르쳐요.
+know|v=알다|I know the answer.|나는 답을 알아요.
+think|v=생각하다|I think it is good.|나는 그것이 좋다고 생각해요.|🤔
+understand|v=이해하다|I understand you.|나는 네 말을 이해해.
+remember|v=기억하다|I remember your name.|나는 네 이름을 기억해.
+forget|v=잊다|Don't forget your bag.|가방을 잊지 마.
+like|v=좋아하다;p=~처럼|I like pizza.|나는 피자를 좋아해요.|👍
+love|v=사랑하다;n=사랑|I love my mom.|나는 엄마를 사랑해요.|❤️
+want|v=원하다, ~하고 싶다|I want some water.|나는 물을 마시고 싶어요.
+need|v=필요하다|I need a pencil.|나는 연필이 필요해요.
+hope|v=바라다;n=희망|I hope you are well.|네가 잘 지내길 바라.
+wish|v=바라다, 빌다;n=소원|Make a wish.|소원을 빌어 봐.
+help|v=돕다;n=도움|Can you help me?|나를 도와줄 수 있니?|🤝
+give|v=주다|Give me the ball.|나에게 공을 줘.
+take|v=가져가다, 잡다;v=(탈것을) 타다|Take your umbrella.|우산을 가져가.
+get|v=받다, 얻다|I get a present.|나는 선물을 받아요.
+bring|v=가져오다|Bring your book.|책을 가져와.
+put|v=놓다, 두다|Put it on the desk.|그것을 책상 위에 놓아.
+make|v=만들다|I make a kite.|나는 연을 만들어요.
+buy|v=사다|I buy a notebook.|나는 공책을 사요.|🛒
+sell|v=팔다|They sell fruit.|그들은 과일을 팔아요.
+pay|v=돈을 내다|I pay for the toy.|나는 장난감값을 내요.
+use|v=쓰다, 사용하다|Can I use your pen?|네 펜을 써도 되니?
+open|v=열다;a=열린|Open the door.|문을 열어.
+close|v=닫다;a=가까운|Close the window.|창문을 닫아.
+start|v=시작하다|Let's start!|시작하자!
+begin|v=시작하다|The class begins at nine.|수업은 아홉 시에 시작해요.
+stop|v=멈추다|Stop the car.|차를 멈춰요.|🛑
+finish|v=끝내다, 마치다|I finish my homework.|나는 숙제를 끝내요.
+end|n=끝;v=끝나다|This is the end.|이것이 끝이에요.
+wait|v=기다리다|Wait for me!|나를 기다려!
+stay|v=머무르다|I stay at home.|나는 집에 있어요.
+live|v=살다|I live in Seoul.|나는 서울에 살아요.
+work|v=일하다;n=일|My mom works at a bank.|우리 엄마는 은행에서 일해요.
+wash|v=씻다|Wash your hands.|손을 씻어요.|🧼
+clean|v=청소하다;a=깨끗한|I clean my room.|나는 내 방을 청소해요.|🧹
+brush|v=닦다, 빗다;n=솔, 붓|I brush my teeth.|나는 이를 닦아요.|🪥
+cut|v=자르다|I cut the paper.|나는 종이를 잘라요.|✂️
+push|v=밀다|Push the door.|문을 밀어.
+pull|v=당기다|Pull the door.|문을 당겨.
+carry|v=들고 가다, 나르다|I carry my bag.|나는 내 가방을 들고 가요.
+hold|v=잡다, 들다|Hold my hand.|내 손을 잡아.
+catch|v=잡다|Catch the ball!|공을 잡아!
+throw|v=던지다|Throw the ball.|공을 던져.
+kick|v=차다|Kick the ball.|공을 차.
+hit|v=치다, 때리다|Hit the ball.|공을 쳐.
+touch|v=만지다|Don't touch it.|그것을 만지지 마.
+move|v=움직이다, 옮기다|Move your chair.|의자를 옮겨.
+turn|v=돌다, 돌리다;n=차례|Turn around.|뒤로 돌아.
+climb|v=오르다|I climb the mountain.|나는 산을 올라요.|🧗
+ride|v=타다|I ride a bike.|나는 자전거를 타요.
+drive|v=운전하다|My mom drives a car.|우리 엄마는 차를 운전해요.
+visit|v=방문하다, 찾아가다|I visit my grandma.|나는 할머니를 찾아가요.
+meet|v=만나다|Nice to meet you.|만나서 반가워.
+call|v=부르다;v=전화하다|Call me later.|나중에 나에게 전화해.
+send|v=보내다|I send a letter.|나는 편지를 보내요.
+show|v=보여 주다;n=쇼, 공연|Show me your picture.|네 그림을 보여 줘.
+find|v=찾다, 찾아내다|I can't find my pen.|내 펜을 못 찾겠어요.|🔍
+lose|v=잃어버리다;v=지다|Don't lose your key.|열쇠를 잃어버리지 마.
+keep|v=가지고 있다, 지키다|Keep the secret.|비밀을 지켜.
+try|v=해 보다, 노력하다|Try again!|다시 해 봐!
+win|v=이기다|We win the game.|우리가 경기를 이겨요.|🏆
+build|v=짓다, 만들다|We build a house.|우리는 집을 지어요.
+grow|v=자라다;v=기르다|Plants grow fast.|식물은 빨리 자라요.|🌱
+change|v=바꾸다, 변하다|Leaves change color.|나뭇잎은 색이 변해요.
+feel|v=느끼다|I feel happy.|나는 기분이 좋아요.
+smell|v=냄새를 맡다, 냄새가 나다;n=냄새|It smells good.|좋은 냄새가 나요.
+taste|v=맛보다, 맛이 나다;n=맛|It tastes sweet.|단맛이 나요.
+laugh|v=웃다|We laugh together.|우리는 함께 웃어요.|😆
+smile|v=미소 짓다;n=미소|She smiles at me.|그녀가 나에게 미소 지어요.|😊
+cry|v=울다|The baby cries.|아기가 울어요.|😢
+shout|v=소리치다|Don't shout.|소리치지 마.
+fight|v=싸우다|Don't fight.|싸우지 마.
+hurt|v=아프다, 다치다|My leg hurts.|다리가 아파요.|🤕
+die|v=죽다|Plants die without water.|식물은 물이 없으면 죽어요.
+dream|n=꿈;v=꿈꾸다|I had a good dream.|나는 좋은 꿈을 꿨어요.|💭
+agree|v=동의하다, 같은 생각이다|I agree with you.|나는 네 생각과 같아.
+choose|v=고르다|Choose one color.|색을 하나 골라.
+count|v=세다|I count to ten.|나는 열까지 세요.
+share|v=나누다, 함께 쓰다|We share our toys.|우리는 장난감을 함께 써요.
+join|v=함께하다, 참여하다|Join us!|우리와 함께하자!
+practice|v=연습하다;n=연습|I practice the piano.|나는 피아노를 연습해요.
+fix|v=고치다|Dad fixes my bike.|아빠가 내 자전거를 고쳐요.|🔧
+cross|v=건너다|Cross the street.|길을 건너요.
+enter|v=들어가다|Enter the room.|방에 들어가요.
+leave|v=떠나다;v=두고 가다|I leave home at eight.|나는 여덟 시에 집을 나서요.
+arrive|v=도착하다|We arrive at school.|우리는 학교에 도착해요.
+follow|v=따라가다|Follow me.|나를 따라와.
+let|v=~하게 하다|Let's go!|가자!
+big|a=큰|The elephant is big.|코끼리는 커요.
+large|a=큰, 넓은|This is a large room.|이곳은 넓은 방이에요.
+small|a=작은|The mouse is small.|쥐는 작아요.
+little|a=작은, 어린;t=조금의|I have a little brother.|나는 남동생이 있어요.
+tall|a=키가 큰|My dad is tall.|우리 아빠는 키가 커요.
+short|a=짧은;a=키가 작은|My hair is short.|내 머리카락은 짧아요.
+long|a=긴|The snake is long.|뱀은 길어요.
+high|a=높은|The mountain is high.|산이 높아요.
+low|a=낮은|The chair is low.|의자가 낮아요.
+fat|a=뚱뚱한|The cat is fat.|고양이가 뚱뚱해요.
+thin|a=얇은;a=마른|This book is thin.|이 책은 얇아요.
+heavy|a=무거운|The box is heavy.|상자가 무거워요.
+fast|a=빠른;d=빨리|The train is fast.|기차는 빨라요.|⚡
+quick|a=빠른|Be quick!|서둘러!
+slow|a=느린|The turtle is slow.|거북은 느려요.|🐢
+good|a=좋은, 착한|You are a good friend.|너는 좋은 친구야.|👍
+bad|a=나쁜|It is a bad day.|오늘은 운이 없는 날이에요.|👎
+nice|a=좋은, 친절한|Nice to meet you.|만나서 반가워.
+great|a=아주 좋은, 대단한|You did a great job!|정말 잘했어!
+fine|a=좋은, 괜찮은|I am fine.|나는 괜찮아요.
+new|a=새로운|I have a new bag.|나는 새 가방이 있어요.|🆕
+old|a=오래된, 낡은;a=나이 든|This house is old.|이 집은 오래됐어요.
+young|a=어린, 젊은|My brother is young.|내 남동생은 어려요.
+happy|a=행복한, 기쁜|I am happy.|나는 행복해요.|😄
+sad|a=슬픈|I am sad.|나는 슬퍼요.|😢
+angry|a=화난|He is angry.|그는 화가 났어요.|😠
+glad|a=기쁜|I am glad to see you.|너를 만나서 기뻐.
+excited|a=신이 난|I am so excited!|나는 정말 신나요!|🤩
+scared|a=무서워하는, 겁먹은|I am scared of the dark.|나는 어둠이 무서워요.|😨
+afraid|a=무서워하는|I am afraid of snakes.|나는 뱀이 무서워요.|😨
+surprised|a=놀란|I am surprised.|나는 놀랐어요.|😲
+worried|a=걱정하는|Mom is worried.|엄마가 걱정하고 있어요.|😟
+tired|a=피곤한|I am tired.|나는 피곤해요.|😫
+sleepy|a=졸린|I am sleepy.|나는 졸려요.|😪
+hungry|a=배고픈|I am hungry.|나는 배고파요.|😋
+thirsty|a=목마른|I am thirsty.|나는 목말라요.
+full|a=가득 찬;a=배부른|I am full.|나는 배불러요.
+empty|a=텅 빈|The box is empty.|상자가 비었어요.
+sick|a=아픈|I am sick today.|나는 오늘 아파요.|🤒
+healthy|a=건강한|Vegetables make you healthy.|채소는 몸을 건강하게 해요.|💪
+strong|a=힘센, 튼튼한|The lion is strong.|사자는 힘이 세요.|💪
+weak|a=약한|The baby bird is weak.|아기 새는 약해요.
+kind|a=친절한;n=종류|She is kind to me.|그녀는 나에게 친절해요.|🤗
+friendly|a=다정한, 친한|My dog is friendly.|우리 개는 사람을 잘 따라요.|😊
+polite|a=예의 바른|He is polite.|그는 예의 발라요.
+brave|a=용감한|The firefighter is brave.|소방관은 용감해요.|🦸
+shy|a=수줍어하는|She is shy.|그녀는 수줍음이 많아요.
+smart|a=똑똑한|My sister is smart.|우리 언니는 똑똑해요.|🧠
+clever|a=영리한|The fox is clever.|여우는 영리해요.
+funny|a=웃긴, 재미있는|The clown is funny.|광대가 웃겨요.|😂
+fun|n=재미, 즐거움;a=재미있는|The game is fun.|그 놀이는 재미있어요.|🎉
+interesting|a=흥미로운, 재미있는|This book is interesting.|이 책은 재미있어요.
+boring|a=지루한|The movie is boring.|그 영화는 지루해요.
+busy|a=바쁜|Dad is busy today.|아빠는 오늘 바빠요.
+free|a=자유로운, 한가한;a=무료의|I am free today.|나는 오늘 한가해요.
+careful|a=조심하는|Be careful!|조심해!|⚠️
+quiet|a=조용한|Be quiet, please.|조용히 해 주세요.|🤫
+loud|a=시끄러운, 소리가 큰|The music is loud.|음악 소리가 커요.|🔊
+pretty|a=예쁜|The flower is pretty.|꽃이 예뻐요.
+beautiful|a=아름다운|The sky is beautiful.|하늘이 아름다워요.
+cute|a=귀여운|The puppy is cute.|강아지가 귀여워요.|🥰
+handsome|a=잘생긴|My dad is handsome.|우리 아빠는 잘생겼어요.
+ugly|a=못생긴|The monster is ugly.|그 괴물은 못생겼어요.
+dirty|a=더러운|My hands are dirty.|내 손이 더러워요.
+wet|a=젖은|My shoes are wet.|내 신발이 젖었어요.|💦
+dry|a=마른, 건조한|The towel is dry.|수건이 말랐어요.
+soft|a=부드러운|The pillow is soft.|베개가 부드러워요.
+hard|a=단단한;a=어려운;d=열심히|The rock is hard.|바위는 단단해요.
+easy|a=쉬운|This test is easy.|이 시험은 쉬워요.
+difficult|a=어려운|This question is difficult.|이 문제는 어려워요.
+sweet|a=달콤한, 단|Candy is sweet.|사탕은 달아요.|🍬
+sour|a=신, 시큼한|Lemons are sour.|레몬은 셔요.|🍋
+salty|a=짠|The soup is salty.|국이 짜요.
+spicy|a=매운|Kimchi is spicy.|김치는 매워요.|🌶️
+delicious|a=맛있는|This cake is delicious.|이 케이크는 맛있어요.|😋
+yummy|a=맛있는|This pizza is yummy.|이 피자는 맛있어요.|😋
+fresh|a=신선한|The fruit is fresh.|과일이 신선해요.
+bright|a=밝은|The sun is bright.|해가 밝아요.|✨
+dark|a=어두운|It is dark at night.|밤에는 어두워요.|🌑
+round|a=둥근|The ball is round.|공은 둥글어요.
+rich|a=부자인, 돈이 많은|The king is rich.|왕은 부자예요.
+poor|a=가난한;a=불쌍한|The poor cat is hungry.|불쌍한 고양이가 배고파해요.
+safe|a=안전한|This place is safe.|이곳은 안전해요.
+dangerous|a=위험한|Fire is dangerous.|불은 위험해요.|⚠️
+important|a=중요한|Sleep is important.|잠은 중요해요.
+special|a=특별한|Today is a special day.|오늘은 특별한 날이에요.
+favorite|a=가장 좋아하는|My favorite color is blue.|내가 가장 좋아하는 색은 파란색이에요.|💖
+ready|a=준비된|I am ready!|나는 준비됐어!
+sure|a=확실한, 물론|Are you sure?|확실하니?
+true|a=진짜의, 사실인|It is a true story.|그것은 진짜 있었던 이야기예요.
+wrong|a=틀린, 잘못된|The answer is wrong.|답이 틀렸어요.|❌
+correct|a=맞는, 올바른|Your answer is correct.|네 답이 맞아.|⭕
+real|a=진짜의|Is it a real diamond?|그것은 진짜 다이아몬드니?
+alone|a=혼자인;d=혼자서|I am home alone.|나는 집에 혼자 있어요.
+far|a=먼;d=멀리|The school is far.|학교가 멀어요.
+deep|a=깊은|The sea is deep.|바다는 깊어요.
+wide|a=넓은|The river is wide.|강이 넓어요.
+lucky|a=운이 좋은|I am lucky today.|나는 오늘 운이 좋아요.|🍀
+dead|a=죽은|The plant is dead.|그 식물은 죽었어요.
+game|n=놀이, 게임, 경기|Let's play a game.|게임을 하자.|🎮
+sport|n=운동, 스포츠|Soccer is my favorite sport.|축구는 내가 가장 좋아하는 운동이에요.
+soccer|n=축구|I play soccer.|나는 축구를 해요.|⚽
+baseball|n=야구|He plays baseball.|그는 야구를 해요.|⚾
+basketball|n=농구|We play basketball.|우리는 농구를 해요.|🏀
+tennis|n=테니스|She plays tennis.|그녀는 테니스를 쳐요.|🎾
+badminton|n=배드민턴|I play badminton with Dad.|나는 아빠와 배드민턴을 쳐요.|🏸
+bat|n=방망이, 야구 배트;n=박쥐|Hit the ball with a bat.|방망이로 공을 쳐요.
+team|n=팀, 편|Our team is strong.|우리 팀은 강해요.
+piano|n=피아노|I play the piano.|나는 피아노를 쳐요.|🎹
+guitar|n=기타|He plays the guitar.|그는 기타를 쳐요.|🎸
+violin|n=바이올린|She plays the violin.|그녀는 바이올린을 켜요.|🎻
+drum|n=북, 드럼|I play the drum.|나는 북을 쳐요.|🥁
+song|n=노래|I like this song.|나는 이 노래를 좋아해요.|🎵
+movie|n=영화|I watch a movie.|나는 영화를 봐요.|🎬
+hobby|n=취미|My hobby is drawing.|내 취미는 그림 그리기예요.
+camping|n=캠핑, 야영|We go camping.|우리는 캠핑을 가요.|⛺
+picnic|n=소풍|We go on a picnic.|우리는 소풍을 가요.|🧺
+puzzle|n=퍼즐, 수수께끼|I like puzzles.|나는 퍼즐을 좋아해요.|🧩
+magic|n=마술, 마법|I can do magic.|나는 마술을 할 수 있어요.|🪄
+prize|n=상|I won a prize.|나는 상을 받았어요.|🏆
+idea|n=생각, 아이디어|I have a good idea.|나에게 좋은 생각이 있어요.|💡
+problem|n=문제|No problem.|문제없어.
+thing|n=것, 물건|What is that thing?|저것은 뭐니?
+something|r=무언가, 어떤 것|I want something sweet.|나는 달콤한 것을 먹고 싶어요.
+nothing|r=아무것도 없음|There is nothing in the box.|상자 안에 아무것도 없어요.
+everything|r=모든 것|I like everything here.|나는 여기 있는 것이 모두 좋아요.
+everyone|r=모든 사람, 모두|Hello, everyone!|여러분, 안녕하세요!
+part|n=부분|This is my favorite part.|이 부분이 내가 가장 좋아하는 부분이에요.
+group|n=모둠, 무리|We work in a group.|우리는 모둠으로 활동해요.
+line|n=줄, 선|Stand in line.|줄을 서요.
+circle|n=동그라미, 원|Draw a circle.|동그라미를 그려요.|⭕
+square|n=정사각형, 네모|A square has four sides.|정사각형은 변이 네 개예요.|🟦
+triangle|n=세모, 삼각형|A triangle has three sides.|삼각형은 변이 세 개예요.|🔺
+shape|n=모양|What shape is it?|그것은 무슨 모양이니?
+size|n=크기|What size is it?|그것은 크기가 어떠니?
+sound|n=소리|I hear a sound.|소리가 들려요.|🔔
+voice|n=목소리|She has a nice voice.|그녀는 목소리가 좋아요.
+news|n=소식, 뉴스|I have good news.|좋은 소식이 있어요.|📰
+secret|n=비밀|It is a secret.|그것은 비밀이야.|🤫
+rule|n=규칙|Follow the rules.|규칙을 지켜요.
+plan|n=계획;v=계획하다|I have a plan.|나에게 계획이 있어요.
+example|n=예, 보기|Look at the example.|보기를 봐요.
+mistake|n=실수|It is my mistake.|그것은 내 실수예요.
+luck|n=운, 행운|Good luck!|행운을 빌어!|🍀
+peace|n=평화|We want peace.|우리는 평화를 원해요.|🕊️
+war|n=전쟁|War is bad.|전쟁은 나빠요.
+life|n=삶, 생명|I love my life.|나는 내 삶을 사랑해요.
+health|n=건강|Health is important.|건강은 중요해요.
+future|n=미래|I think about my future.|나는 내 미래를 생각해요.
+monster|n=괴물|The monster is big.|괴물이 커요.|👾
+ghost|n=유령|I am not afraid of ghosts.|나는 유령이 무섭지 않아요.|👻
+angel|n=천사|She is like an angel.|그녀는 천사 같아요.|😇
+hero|n=영웅|My dad is my hero.|우리 아빠는 나의 영웅이에요.|🦸
+`;
+/* =========================================================
+   📘 원어민 교재 보강 사전
+   미국 초등 1~3학년 워크북(읽기·언어·수학·과학·사회)에 자주 나오는
+   지시문, 문법·파닉스 용어, 교과 용어, 이야기 지문 어휘.
+   ========================================================= */
+const KIDS_RAW2 = `
+underline|v=밑줄을 긋다|Underline the noun.|명사에 밑줄을 그어요.
+match|v=짝을 맞추다, 연결하다;n=시합|Match the word to the picture.|단어와 그림을 연결해요.
+trace|v=따라 그리다, 따라 쓰다|Trace the letter.|글자를 따라 써요.
+complete|v=완성하다;a=완전한|Complete the sentence.|문장을 완성해요.
+fill|v=채우다|Fill in the blank.|빈칸을 채워요.
+blank|n=빈칸;a=비어 있는|Write the word in the blank.|빈칸에 단어를 써요.
+check|v=확인하다;n=체크 표시|Check your answer.|답을 확인해요.|✅
+sort|v=나누어 분류하다|Sort the words.|단어를 분류해요.
+order|n=순서;v=주문하다|Put the numbers in order.|숫자를 순서대로 놓아요.
+compare|v=비교하다|Compare the two pictures.|두 그림을 비교해요.
+describe|v=설명하다, 묘사하다|Describe your friend.|네 친구를 설명해 봐.
+explain|v=설명하다|Explain your answer.|네 답을 설명해 봐.
+solve|v=풀다, 해결하다|Solve the problem.|문제를 풀어요.
+spell|v=철자를 쓰다, 철자를 말하다|Spell your name.|네 이름의 철자를 말해 봐.
+print|v=또박또박 쓰다, 인쇄하다|Print your name.|이름을 또박또박 써요.
+copy|v=베껴 쓰다, 따라 하다|Copy the sentence.|문장을 베껴 써요.
+label|v=이름을 써 붙이다;n=이름표|Label the picture.|그림에 이름을 써요.
+list|n=목록;v=죽 적다|Make a list.|목록을 만들어요.|📋
+mark|v=표시하다;n=표시|Mark the right answer.|맞는 답에 표시해요.
+point|v=가리키다;n=점, 점수|Point to the cat.|고양이를 가리켜 봐.
+repeat|v=따라 말하다, 반복하다|Repeat after me.|나를 따라 말해 봐.
+review|v=복습하다;n=복습|Let's review the words.|단어를 복습하자.
+direction|n=방향;n=지시, 안내|Read the directions.|지시문을 읽어요.
+sentence|n=문장|Write a sentence.|문장을 써요.
+paragraph|n=문단|Read the paragraph.|문단을 읽어요.
+title|n=제목|What is the title?|제목이 무엇이니?
+author|n=글쓴이, 작가|Who is the author?|글쓴이가 누구니?
+character|n=등장인물|Who is the main character?|주인공이 누구니?
+setting|n=배경 (이야기가 일어나는 때와 곳)|The setting is a farm.|배경은 농장이에요.
+event|n=사건, 일어난 일|What is the first event?|처음 일어난 일은 무엇이니?
+detail|n=자세한 내용|Find two details.|자세한 내용을 두 가지 찾아요.
+main|a=가장 중요한, 주된|What is the main idea?|중심 생각이 무엇이니?
+topic|n=주제|The topic is animals.|주제는 동물이에요.
+fact|n=사실|It is a fact.|그것은 사실이에요.
+opinion|n=의견, 생각|That is my opinion.|그것은 내 의견이에요.
+fiction|n=지어낸 이야기|This story is fiction.|이 이야기는 지어낸 이야기예요.
+nonfiction|n=사실을 쓴 글|This book is nonfiction.|이 책은 사실을 쓴 책이에요.
+poem|n=시|I wrote a poem.|나는 시를 썼어요.
+rhyme|v=소리가 비슷하게 끝나다;n=각운|Cat and hat rhyme.|cat과 hat은 끝소리가 같아요.
+chapter|n=장 (책의 한 부분)|Read chapter one.|1장을 읽어요.
+passage|n=지문, 글|Read the passage.|지문을 읽어요.
+text|n=글, 본문|Look back at the text.|글을 다시 봐요.
+dictionary|n=사전|Look it up in a dictionary.|사전에서 찾아봐요.|📖
+meaning|n=뜻, 의미|What is the meaning?|뜻이 무엇이니?
+definition|n=뜻풀이|Read the definition.|뜻풀이를 읽어요.
+clue|n=단서, 힌트|Find the clue.|단서를 찾아요.|🔎
+guess|v=알아맞히다, 짐작하다|Guess the answer.|답을 맞혀 봐.
+predict|v=미리 짐작하다, 예측하다|Predict what happens next.|다음에 무슨 일이 일어날지 짐작해 봐.
+retell|v=다시 이야기하다|Retell the story.|이야기를 다시 말해 봐.
+beginning|n=처음, 시작|Read the beginning.|처음 부분을 읽어요.
+ending|n=끝, 결말|I like the ending.|나는 결말이 마음에 들어요.
+sequence|n=차례, 순서|Write the sequence.|차례를 써요.
+cause|n=원인, 까닭|What is the cause?|원인이 무엇이니?
+effect|n=결과|What is the effect?|결과가 무엇이니?
+similar|a=비슷한|The two cats are similar.|두 고양이는 비슷해요.
+opposite|n=반대, 반대말;a=반대의|Hot is the opposite of cold.|hot은 cold의 반대말이에요.
+pair|n=한 쌍, 짝|I have a pair of socks.|나는 양말 한 켤레가 있어요.
+missing|a=빠진, 없어진|Write the missing letter.|빠진 글자를 써요.
+below|p=~아래에|Read the words below.|아래의 단어를 읽어요.
+above|p=~위에|Look at the picture above.|위의 그림을 봐요.
+beside|p=~옆에|Sit beside me.|내 옆에 앉아.
+across|p=~을 건너서, 가로질러|Walk across the street.|길을 건너가요.
+through|p=~을 지나서, 통과하여|We walk through the park.|우리는 공원을 지나서 걸어요.
+along|p=~을 따라|Walk along the river.|강을 따라 걸어요.
+toward|p=~쪽으로|Walk toward the door.|문 쪽으로 걸어가요.
+inside|p=~안에;d=안으로|Come inside.|안으로 들어와.
+outside|p=~밖에;d=밖에서|Let's play outside.|밖에서 놀자.
+without|p=~없이|I can't see without glasses.|나는 안경 없이는 볼 수 없어요.
+until|p=~까지|Wait until three.|세 시까지 기다려.
+during|p=~동안|Be quiet during class.|수업 시간 동안 조용히 해요.
+while|c=~하는 동안|I sing while I walk.|나는 걸으면서 노래해요.
+since|p=~부터, ~이래로|I have lived here since May.|나는 5월부터 여기 살았어요.
+both|t=둘 다|Both cats are cute.|고양이 두 마리가 다 귀여워요.
+another|t=또 하나의, 다른|I want another cookie.|쿠키를 하나 더 먹고 싶어요.
+few|t=몇 개의, 조금|I have a few friends.|나는 친구가 몇 명 있어요.
+several|t=여러 개의|I have several pens.|나는 펜이 여러 개 있어요.
+enough|t=충분한;d=충분히|I have enough money.|나는 돈이 충분히 있어요.
+most|t=대부분의;d=가장|Most kids like candy.|대부분의 아이들은 사탕을 좋아해요.
+own|a=자기 자신의|I have my own room.|나는 내 방이 따로 있어요.
+even|d=~조차, ~까지도;a=짝수의|Four is an even number.|4는 짝수예요.
+odd|a=홀수의;a=이상한|Three is an odd number.|3은 홀수예요.
+still|d=아직도, 여전히|It is still raining.|아직도 비가 와요.
+already|d=이미, 벌써|I already ate.|나는 벌써 먹었어요.
+almost|d=거의|I am almost done.|나는 거의 다 했어요.
+usually|d=보통, 대개|I usually walk to school.|나는 보통 학교에 걸어가요.
+maybe|d=아마, 어쩌면|Maybe it will rain.|어쩌면 비가 올지도 몰라요.
+quickly|d=빨리|Run quickly!|빨리 달려!
+slowly|d=천천히|Walk slowly.|천천히 걸어요.
+carefully|d=조심해서, 꼼꼼히|Read carefully.|꼼꼼히 읽어요.
+suddenly|d=갑자기|Suddenly, it rained.|갑자기 비가 왔어요.
+finally|d=마침내, 드디어|Finally, we got home.|마침내 우리는 집에 도착했어요.
+once|d=한 번;d=옛날에|Once upon a time.|옛날 옛적에.
+twice|d=두 번|I read it twice.|나는 그것을 두 번 읽었어요.
+ever|d=지금까지, 언제든|Have you ever seen a whale?|고래를 본 적이 있니?
+yet|d=아직|I am not done yet.|나는 아직 다 못 했어요.
+instead|d=대신에|I want milk instead.|나는 대신 우유를 마시고 싶어요.
+else|d=그 밖에, 다른|What else do you need?|그 밖에 무엇이 필요하니?
+quite|d=꽤, 상당히|It is quite cold.|꽤 추워요.
+ago|d=~전에|I came here two years ago.|나는 2년 전에 여기 왔어요.
+later|d=나중에|See you later.|나중에 봐.
+tonight|n=오늘 밤|It will rain tonight.|오늘 밤에 비가 올 거예요.
+upon|p=~위에|Once upon a time.|옛날 옛적에.
+noun|n=명사 (사람, 동물, 물건, 곳의 이름)|Dog is a noun.|dog는 명사예요.
+verb|n=동사 (움직임을 나타내는 말)|Run is a verb.|run은 동사예요.
+adjective|n=형용사 (꾸며 주는 말)|Big is an adjective.|big은 형용사예요.
+adverb|n=부사 (어떻게 하는지 알려 주는 말)|Quickly is an adverb.|quickly는 부사예요.
+pronoun|n=대명사 (이름 대신 쓰는 말)|He is a pronoun.|he는 대명사예요.
+vowel|n=모음 (a, e, i, o, u)|A is a vowel.|a는 모음이에요.
+consonant|n=자음|B is a consonant.|b는 자음이에요.
+syllable|n=음절 (소리의 마디)|Apple has two syllables.|apple은 두 음절이에요.
+alphabet|n=알파벳|Say the alphabet.|알파벳을 말해 봐.|🔤
+capital|n=대문자;n=수도|Start with a capital letter.|대문자로 시작해요.
+uppercase|n=대문자|Write an uppercase A.|대문자 A를 써요.
+lowercase|n=소문자|Write a lowercase a.|소문자 a를 써요.
+period|n=마침표;n=기간|Put a period at the end.|끝에 마침표를 찍어요.
+comma|n=쉼표|Add a comma.|쉼표를 넣어요.
+question mark|n=물음표|Add a question mark.|물음표를 넣어요.|❓
+exclamation|n=느낌표, 감탄|Use an exclamation point.|느낌표를 써요.|❗
+punctuation|n=문장 부호|Check your punctuation.|문장 부호를 확인해요.
+plural|n=복수 (둘 이상을 나타내는 모양)|Cats is plural.|cats는 복수예요.
+singular|n=단수 (하나를 나타내는 모양)|Cat is singular.|cat은 단수예요.
+tense|n=시제 (언제 일어난 일인지 나타냄)|Use the past tense.|과거 시제를 써요.
+past|n=과거, 지난날;p=~을 지나서|In the past, there were no cars.|옛날에는 자동차가 없었어요.
+subject|n=주어;n=과목|What is the subject?|주어가 무엇이니?
+compound|n=합쳐서 만든 말|Rainbow is a compound word.|rainbow는 두 낱말을 합친 말이에요.
+contraction|n=줄임말|Don't is a contraction.|don't는 줄임말이에요.
+prefix|n=낱말 앞에 붙는 말|Un is a prefix.|un은 낱말 앞에 붙는 말이에요.
+suffix|n=낱말 뒤에 붙는 말|Ful is a suffix.|ful은 낱말 뒤에 붙는 말이에요.
+synonym|n=비슷한말|Big is a synonym for large.|big은 large의 비슷한말이에요.
+antonym|n=반대말|Hot is an antonym for cold.|hot은 cold의 반대말이에요.
+homophone|n=소리가 같고 뜻이 다른 말|Two and too are homophones.|two와 too는 소리가 같은 말이에요.
+phonics|n=파닉스 (글자와 소리 배우기)|We learn phonics.|우리는 파닉스를 배워요.
+blend|v=섞다, 소리를 이어 읽다|Blend the sounds.|소리를 이어서 읽어요.
+spelling|n=철자, 맞춤법|Check your spelling.|철자를 확인해요.
+vocabulary|n=어휘, 낱말|Learn new vocabulary.|새 낱말을 배워요.
+language|n=언어, 말|English is a language.|영어는 언어예요.
+grammar|n=문법|We study grammar.|우리는 문법을 공부해요.
+statement|n=평서문, 말하는 문장|A statement ends with a period.|평서문은 마침표로 끝나요.
+command|n=명령문, 시키는 말|Sit down is a command.|sit down은 명령문이에요.
+add|v=더하다|Add two and three.|2와 3을 더해요.|➕
+subtract|v=빼다|Subtract two from five.|5에서 2를 빼요.|➖
+plus|p=더하기|Two plus two is four.|2 더하기 2는 4예요.|➕
+minus|p=빼기|Five minus two is three.|5 빼기 2는 3이에요.|➖
+equal|v=~와 같다;a=같은|Two plus two equals four.|2 더하기 2는 4와 같아요.|🟰
+sum|n=합, 더한 값|The sum is ten.|합은 10이에요.
+difference|n=차, 뺀 값;n=다른 점|The difference is two.|차는 2예요.
+total|n=전체, 모두 합한 것|The total is twenty.|모두 합하면 20이에요.
+digit|n=숫자 (0부터 9까지)|Ten has two digits.|10은 숫자가 두 개예요.
+greater|a=더 큰|Five is greater than three.|5는 3보다 커요.
+less|a=더 적은|Two is less than four.|2는 4보다 작아요.
+fewer|a=더 적은 (셀 수 있는 것)|I have fewer pens.|나는 펜이 더 적어요.
+skip|v=건너뛰다;v=깡충깡충 뛰다|Skip count by twos.|둘씩 뛰어 세어요.
+pattern|n=규칙, 무늬|Find the pattern.|규칙을 찾아요.
+measure|v=재다|Measure the pencil.|연필 길이를 재요.|📏
+length|n=길이|What is the length?|길이가 얼마니?
+width|n=너비, 폭|Measure the width.|너비를 재요.
+height|n=높이, 키|What is your height?|너는 키가 얼마니?
+weight|n=무게|What is the weight?|무게가 얼마니?
+inch|n=인치 (약 2.5센티미터)|The bug is one inch long.|그 벌레는 1인치예요.
+centimeter|n=센티미터|It is ten centimeters long.|그것은 10센티미터예요.
+meter|n=미터|The room is five meters wide.|방은 너비가 5미터예요.
+pound|n=파운드 (무게, 약 450그램)|The cat weighs ten pounds.|그 고양이는 10파운드예요.
+dollar|n=달러 (미국 돈)|It costs one dollar.|그것은 1달러예요.|💵
+cent|n=센트 (1달러의 100분의 1)|A penny is one cent.|페니는 1센트예요.
+penny|n=페니 (1센트 동전)|I found a penny.|나는 1센트 동전을 주웠어요.|🪙
+nickel|n=니켈 (5센트 동전)|A nickel is five cents.|니켈은 5센트예요.
+dime|n=다임 (10센트 동전)|A dime is ten cents.|다임은 10센트예요.
+quarter|n=쿼터 (25센트 동전);n=4분의 1|A quarter is 25 cents.|쿼터는 25센트예요.
+coin|n=동전|I have five coins.|나는 동전이 다섯 개 있어요.|🪙
+price|n=값, 가격|What is the price?|값이 얼마니?
+cost|v=값이 ~이다;n=값, 비용|It costs two dollars.|그것은 2달러예요.
+graph|n=그래프|Look at the graph.|그래프를 봐요.|📊
+chart|n=표, 도표|Fill in the chart.|표를 채워요.
+tally|n=개수를 세는 표시|Make a tally mark.|개수 표시를 해요.
+row|n=가로줄|Sit in the first row.|첫째 줄에 앉아요.
+column|n=세로줄|Look at the first column.|첫째 세로줄을 봐요.
+fraction|n=분수|One half is a fraction.|2분의 1은 분수예요.
+whole|a=전체의;n=전체|I ate the whole pizza.|나는 피자를 전부 먹었어요.
+multiply|v=곱하다|Multiply two by three.|2에 3을 곱해요.|✖️
+divide|v=나누다|Divide ten by two.|10을 2로 나눠요.|➗
+times|p=곱하기;n=~번|Two times three is six.|2 곱하기 3은 6이에요.
+rectangle|n=직사각형|A door is a rectangle.|문은 직사각형이에요.
+oval|n=타원, 달걀 모양|An egg is an oval.|달걀은 타원 모양이에요.
+cube|n=정육면체, 주사위 모양|A box is a cube.|상자는 정육면체예요.|🧊
+cone|n=원뿔|A party hat is a cone.|고깔모자는 원뿔 모양이에요.
+cylinder|n=원기둥|A can is a cylinder.|깡통은 원기둥 모양이에요.
+sphere|n=구, 공 모양|A ball is a sphere.|공은 구 모양이에요.
+pyramid|n=피라미드, 각뿔|Look at the pyramid.|피라미드를 봐요.
+edge|n=모서리, 가장자리|A cube has twelve edges.|정육면체는 모서리가 열두 개예요.
+angle|n=각, 각도|A square has four angles.|정사각형은 각이 네 개예요.
+straight|a=곧은, 똑바른;d=똑바로|Draw a straight line.|곧은 선을 그어요.
+curve|n=굽은 선, 곡선|Draw a curve.|굽은 선을 그려요.
+estimate|v=어림하다|Estimate the number.|수를 어림해 봐요.
+nearest|a=가장 가까운|Round to the nearest ten.|가장 가까운 십으로 어림해요.
+tens|n=십의 자리|Three tens is thirty.|십이 세 개면 30이에요.
+ones|n=일의 자리|Look at the ones place.|일의 자리를 봐요.
+addition|n=덧셈|I am good at addition.|나는 덧셈을 잘해요.
+subtraction|n=뺄셈|We learn subtraction.|우리는 뺄셈을 배워요.
+calendar|n=달력|Look at the calendar.|달력을 봐요.|📅
+dozen|n=열두 개 한 묶음|I bought a dozen eggs.|나는 달걀 열두 개를 샀어요.
+double|a=두 배의;v=두 배로 하다|Double the number.|그 수를 두 배로 해요.
+amount|n=양, 액수|What is the total amount?|모두 얼마니?
+fourteen|m=열넷, 14|I have fourteen cards.|나는 카드가 열네 장 있어요.
+sixteen|m=열여섯, 16|My sister is sixteen.|우리 언니는 열여섯 살이에요.
+seventeen|m=열일곱, 17|There are seventeen birds.|새가 열일곱 마리 있어요.
+eighteen|m=열여덟, 18|I counted eighteen cars.|나는 차 열여덟 대를 셌어요.
+nineteen|m=열아홉, 19|Nineteen comes before twenty.|19는 20 앞에 와요.
+sixty|m=예순, 60|An hour has sixty minutes.|한 시간은 60분이에요.
+seventy|m=일흔, 70|My grandpa is seventy.|우리 할아버지는 일흔 살이에요.
+eighty|m=여든, 80|I got eighty points.|나는 80점을 받았어요.
+ninety|m=아흔, 90|Ninety comes before one hundred.|90은 100 앞에 와요.
+million|m=백만|A million stars shine.|별 백만 개가 빛나요.
+living|a=살아 있는|A tree is a living thing.|나무는 살아 있는 것이에요.
+habitat|n=서식지 (동식물이 사는 곳)|The forest is a deer's habitat.|숲은 사슴이 사는 곳이에요.
+mammal|n=포유류 (젖을 먹여 새끼를 기르는 동물)|A dog is a mammal.|개는 포유류예요.
+insect|n=곤충|An ant is an insect.|개미는 곤충이에요.|🐞
+reptile|n=파충류|A snake is a reptile.|뱀은 파충류예요.|🦎
+amphibian|n=양서류|A frog is an amphibian.|개구리는 양서류예요.|🐸
+root|n=뿌리|Roots grow under the ground.|뿌리는 땅속에서 자라요.
+stem|n=줄기|The stem holds the flower.|줄기가 꽃을 받쳐요.
+soil|n=흙|Plants grow in soil.|식물은 흙에서 자라요.
+ground|n=땅, 땅바닥|Sit on the ground.|땅바닥에 앉아요.
+sunlight|n=햇빛|Plants need sunlight.|식물은 햇빛이 필요해요.|🌤️
+energy|n=에너지, 힘|Food gives us energy.|음식은 우리에게 힘을 줘요.|⚡
+heat|n=열, 더위;v=데우다|The sun gives heat.|해는 열을 내요.
+ice|n=얼음|Ice is cold.|얼음은 차가워요.|🧊
+liquid|n=액체|Water is a liquid.|물은 액체예요.
+solid|n=고체;a=단단한|Ice is a solid.|얼음은 고체예요.
+gas|n=기체;n=휘발유|Air is a gas.|공기는 기체예요.
+matter|n=물질;v=중요하다|Everything is made of matter.|모든 것은 물질로 이루어져 있어요.
+magnet|n=자석|A magnet pulls iron.|자석은 쇠를 끌어당겨요.|🧲
+force|n=힘|A push is a force.|미는 것은 힘이에요.
+motion|n=움직임, 운동|The ball is in motion.|공이 움직이고 있어요.
+gravity|n=중력 (땅이 끌어당기는 힘)|Gravity pulls things down.|중력은 물건을 아래로 끌어당겨요.
+shadow|n=그림자|I see my shadow.|내 그림자가 보여요.
+planet|n=행성|Earth is a planet.|지구는 행성이에요.|🪐
+desert|n=사막|A desert is dry.|사막은 건조해요.|🏜️
+pond|n=연못|Ducks swim in the pond.|오리가 연못에서 헤엄쳐요.
+stream|n=시냇물, 개울|Fish live in the stream.|물고기가 시냇물에 살아요.
+cave|n=동굴|Bats live in a cave.|박쥐는 동굴에 살아요.
+storm|n=폭풍|A storm is coming.|폭풍이 오고 있어요.|⛈️
+thunder|n=천둥|I hear thunder.|천둥소리가 들려요.
+lightning|n=번개|I saw lightning.|나는 번개를 봤어요.|⚡
+fog|n=안개|There is fog today.|오늘은 안개가 꼈어요.|🌫️
+temperature|n=온도, 기온|The temperature is high.|기온이 높아요.|🌡️
+thermometer|n=온도계|Read the thermometer.|온도계를 읽어요.|🌡️
+experiment|n=실험|We do an experiment.|우리는 실험을 해요.|🧪
+observe|v=관찰하다|Observe the plant.|식물을 관찰해요.
+caterpillar|n=애벌레|The caterpillar eats leaves.|애벌레는 잎을 먹어요.|🐛
+cocoon|n=고치|A moth comes out of a cocoon.|나방은 고치에서 나와요.
+tadpole|n=올챙이|A tadpole becomes a frog.|올챙이는 개구리가 돼요.
+nest|n=둥지|The bird is in its nest.|새가 둥지에 있어요.|🪺
+feather|n=깃털|A bird has feathers.|새는 깃털이 있어요.|🪶
+fur|n=털 (동물의)|The cat has soft fur.|고양이는 털이 부드러워요.
+shell|n=껍데기, 조개껍데기|A turtle has a shell.|거북은 등딱지가 있어요.|🐚
+bone|n=뼈|The dog has a bone.|개가 뼈다귀를 가지고 있어요.|🦴
+muscle|n=근육|Muscles help you move.|근육은 몸을 움직이게 도와줘요.|💪
+brain|n=뇌, 두뇌|Use your brain.|머리를 써 봐.|🧠
+blood|n=피|Blood is red.|피는 빨개요.
+lung|n=폐, 허파|We breathe with our lungs.|우리는 폐로 숨을 쉬어요.
+breathe|v=숨 쉬다|Breathe slowly.|천천히 숨을 쉬어요.
+sense|n=감각|We have five senses.|우리는 다섯 가지 감각이 있어요.
+sight|n=시각, 보는 것|Sight is one of the senses.|시각은 감각 가운데 하나예요.
+exercise|n=운동;v=운동하다|Exercise is good for you.|운동은 몸에 좋아요.|🏃
+germ|n=세균|Wash off the germs.|세균을 씻어 내요.|🦠
+medicine|n=약|Take your medicine.|약을 먹어요.|💊
+recycle|v=재활용하다|We recycle paper.|우리는 종이를 재활용해요.|♻️
+trash|n=쓰레기|Put trash in the can.|쓰레기는 쓰레기통에 넣어요.|🗑️
+pollution|n=오염|Pollution hurts animals.|오염은 동물을 아프게 해요.
+environment|n=환경|We protect the environment.|우리는 환경을 보호해요.|🌏
+tool|n=도구, 연장|A hammer is a tool.|망치는 도구예요.|🛠️
+machine|n=기계|A robot is a machine.|로봇은 기계예요.|⚙️
+electricity|n=전기|Lamps use electricity.|전등은 전기를 써요.|🔌
+battery|n=건전지, 배터리|The toy needs a battery.|그 장난감은 건전지가 필요해요.|🔋
+material|n=재료|What material is it?|그것은 무슨 재료로 만들었니?
+metal|n=금속, 쇠|A key is made of metal.|열쇠는 쇠로 만들어요.
+wood|n=나무 (재료)|The desk is made of wood.|책상은 나무로 만들어요.|🪵
+plastic|n=플라스틱|The cup is plastic.|그 컵은 플라스틱이에요.
+rubber|n=고무|The ball is made of rubber.|그 공은 고무로 만들어요.
+cotton|n=솜, 면|My shirt is cotton.|내 셔츠는 면이에요.
+iron|n=쇠, 철;n=다리미|A magnet pulls iron.|자석은 쇠를 끌어당겨요.
+steam|n=김, 수증기|Steam comes from hot water.|뜨거운 물에서 김이 나요.
+melt|v=녹다|Ice melts in the sun.|얼음은 햇볕에 녹아요.
+freeze|v=얼다, 얼리다|Water freezes into ice.|물은 얼어서 얼음이 돼요.|🥶
+community|n=지역 사회, 마을 공동체|I help my community.|나는 우리 마을을 도와요.
+neighbor|n=이웃|My neighbor is kind.|우리 이웃은 친절해요.
+neighborhood|n=동네|I like my neighborhood.|나는 우리 동네가 좋아요.|🏘️
+citizen|n=시민, 국민|Be a good citizen.|좋은 시민이 되어요.
+law|n=법|We follow the law.|우리는 법을 지켜요.
+vote|v=투표하다;n=투표|People vote for a leader.|사람들은 지도자를 뽑으려고 투표해요.|🗳️
+leader|n=지도자, 이끄는 사람|She is a good leader.|그녀는 좋은 지도자예요.
+president|n=대통령|The president leads the country.|대통령은 나라를 이끌어요.
+government|n=정부|The government makes laws.|정부는 법을 만들어요.
+state|n=주 (미국의 지역);n=상태|Texas is a big state.|텍사스는 큰 주예요.
+nation|n=나라, 국가|Our nation is strong.|우리나라는 강해요.
+flag|n=깃발, 국기|This is our flag.|이것은 우리 국기예요.|🚩
+history|n=역사|I like history.|나는 역사를 좋아해요.
+culture|n=문화|I learn about Korean culture.|나는 한국 문화를 배워요.
+tradition|n=전통|It is a family tradition.|그것은 우리 가족의 전통이에요.
+custom|n=풍습, 관습|Bowing is a Korean custom.|절은 한국의 풍습이에요.
+celebrate|v=축하하다, 기념하다|We celebrate my birthday.|우리는 내 생일을 축하해요.|🎉
+festival|n=축제|We go to the festival.|우리는 축제에 가요.|🎪
+globe|n=지구본|Find Korea on the globe.|지구본에서 한국을 찾아요.|🌐
+continent|n=대륙|Asia is a continent.|아시아는 대륙이에요.
+compass|n=나침반|A compass shows north.|나침반은 북쪽을 알려 줘요.|🧭
+symbol|n=상징, 기호|The flag is a symbol.|국기는 상징이에요.
+freedom|n=자유|People want freedom.|사람들은 자유를 원해요.
+goods|n=물건, 상품|Stores sell goods.|가게는 물건을 팔아요.
+service|n=서비스, 남을 돕는 일|A doctor gives a service.|의사는 사람을 돕는 일을 해요.
+earn|v=돈을 벌다|People work to earn money.|사람들은 돈을 벌려고 일해요.
+save|v=모으다, 아끼다;v=구하다|I save my money.|나는 돈을 모아요.
+spend|v=돈을 쓰다;v=시간을 보내다|Don't spend it all.|다 써 버리지 마.
+trade|v=바꾸다, 거래하다|Let's trade cards.|카드를 바꾸자.
+factory|n=공장|The factory makes cars.|그 공장은 자동차를 만들어요.|🏭
+office|n=사무실|Mom works in an office.|엄마는 사무실에서 일해요.
+mayor|n=시장 (도시의 대표)|The mayor leads the city.|시장은 도시를 이끌어요.
+soldier|n=군인|The soldier is brave.|군인은 용감해요.
+America|n=미국|My teacher is from America.|우리 선생님은 미국에서 왔어요.|🇺🇸
+American|a=미국의;n=미국 사람|She is American.|그녀는 미국 사람이에요.|🇺🇸
+become|v=~이 되다|I want to become a pilot.|나는 조종사가 되고 싶어요.
+believe|v=믿다|I believe you.|나는 너를 믿어.
+decide|v=결정하다, 정하다|I can't decide.|나는 결정을 못 하겠어요.
+discover|v=발견하다|We discover a cave.|우리는 동굴을 발견해요.
+explore|v=탐험하다|Let's explore the forest.|숲을 탐험하자.|🧭
+happen|v=일어나다, 생기다|What happened?|무슨 일이 있었니?
+imagine|v=상상하다|Imagine you can fly.|네가 날 수 있다고 상상해 봐.|💭
+notice|v=알아차리다|I notice a small bug.|나는 작은 벌레를 알아차려요.
+pretend|v=~인 척하다|I pretend to be a lion.|나는 사자인 척해요.
+promise|v=약속하다;n=약속|I promise.|약속할게.|🤙
+protect|v=보호하다, 지키다|Helmets protect your head.|헬멧은 머리를 보호해요.|🛡️
+raise|v=들어 올리다;v=기르다|Raise your hand.|손을 들어요.|🙋
+reach|v=닿다, 도착하다|I can't reach the shelf.|나는 선반에 손이 안 닿아요.
+receive|v=받다|I receive a letter.|나는 편지를 받아요.
+return|v=돌아오다;v=돌려주다|Return the book.|책을 돌려줘요.
+rush|v=서두르다, 급히 가다|Don't rush.|서두르지 마.
+search|v=찾아보다|Search for the key.|열쇠를 찾아봐.|🔍
+seem|v=~처럼 보이다|You seem happy.|너는 기분이 좋아 보여.
+shake|v=흔들다|Shake the bottle.|병을 흔들어요.
+shine|v=빛나다|The stars shine.|별이 빛나요.|✨
+slide|v=미끄러지다;n=미끄럼틀|I go down the slide.|나는 미끄럼틀을 타요.|🛝
+spill|v=쏟다, 엎지르다|I spilled my milk.|나는 우유를 쏟았어요.
+spread|v=펴다, 바르다|Spread butter on bread.|빵에 버터를 발라요.
+squeeze|v=꽉 짜다, 꼭 쥐다|Squeeze the lemon.|레몬을 짜요.
+step|n=걸음, 단계;v=발을 디디다|Take one step.|한 걸음 가요.
+stick|n=막대기;v=붙이다|The dog brings a stick.|개가 막대기를 물어 와요.
+surprise|n=놀라운 일;v=놀라게 하다|I have a surprise for you.|너를 놀라게 할 것이 있어.|🎁
+tie|v=묶다;n=넥타이|Tie your shoes.|신발 끈을 묶어요.|👔
+travel|v=여행하다|We travel by train.|우리는 기차로 여행해요.|🧳
+whisper|v=속삭이다|Whisper in my ear.|내 귀에 속삭여 봐.
+wonder|v=궁금해하다|I wonder why.|나는 왜 그런지 궁금해요.
+worry|v=걱정하다|Don't worry.|걱정하지 마.
+wrap|v=싸다, 포장하다|Wrap the gift.|선물을 포장해요.
+yell|v=소리 지르다|Don't yell.|소리 지르지 마.
+hide|v=숨다, 숨기다|Hide behind the tree.|나무 뒤에 숨어.|🙈
+hug|v=껴안다;n=포옹|I hug my mom.|나는 엄마를 껴안아요.|🤗
+kiss|v=뽀뽀하다;n=뽀뽀|Mom kisses my cheek.|엄마가 내 볼에 뽀뽀해요.
+knock|v=두드리다|Knock on the door.|문을 두드려요.
+lift|v=들어 올리다|Lift the box.|상자를 들어 올려요.
+pick|v=고르다;v=따다, 줍다|Pick one card.|카드를 한 장 골라요.
+pour|v=붓다, 따르다|Pour the milk.|우유를 따라요.
+roll|v=구르다, 굴리다|Roll the ball.|공을 굴려요.
+rub|v=문지르다|Rub your hands.|손을 문질러요.
+bake|v=굽다|We bake a cake.|우리는 케이크를 구워요.|🧁
+boil|v=끓이다, 끓다|Boil the water.|물을 끓여요.
+chew|v=씹다|Chew your food well.|음식을 잘 씹어요.
+bite|v=물다, 깨물다;n=한 입|The dog does not bite.|그 개는 물지 않아요.
+blow|v=불다|Blow out the candles.|촛불을 불어서 꺼요.
+borrow|v=빌리다|Can I borrow your pen?|네 펜을 빌려도 되니?
+lend|v=빌려주다|Lend me your book.|네 책을 빌려줘.
+break|v=깨다, 부수다;n=쉬는 시간|Don't break the cup.|컵을 깨지 마.
+burn|v=타다, 태우다|The fire burns.|불이 타요.
+bury|v=묻다|The dog buries a bone.|개가 뼈다귀를 묻어요.
+chase|v=쫓아가다|The cat chases the mouse.|고양이가 쥐를 쫓아가요.
+cheer|v=응원하다, 환호하다|We cheer for our team.|우리는 우리 팀을 응원해요.|📣
+clap|v=손뼉을 치다|Clap your hands.|손뼉을 쳐요.|👏
+collect|v=모으다|I collect stickers.|나는 스티커를 모아요.
+cover|v=덮다, 가리다;n=덮개, 표지|Cover your mouth.|입을 가려요.
+dig|v=파다|The dog digs a hole.|개가 구멍을 파요.
+drop|v=떨어뜨리다;n=방울|Don't drop the egg.|달걀을 떨어뜨리지 마.
+escape|v=달아나다, 탈출하다|The bird escaped.|새가 달아났어요.
+feed|v=먹이를 주다|I feed my dog.|나는 우리 개에게 먹이를 줘요.
+float|v=뜨다|A boat floats on water.|배는 물 위에 떠요.
+sink|v=가라앉다;n=개수대, 세면대|A rock sinks in water.|돌은 물에 가라앉아요.
+fold|v=접다|Fold the paper.|종이를 접어요.
+gather|v=모으다, 모이다|Gather the leaves.|나뭇잎을 모아요.
+greet|v=인사하다|Greet your teacher.|선생님께 인사해요.
+hang|v=걸다, 매달리다|Hang up your coat.|외투를 걸어요.
+hop|v=깡충 뛰다|Rabbits hop.|토끼는 깡충깡충 뛰어요.
+hurry|v=서두르다|Hurry up!|서둘러!
+invite|v=초대하다|I invite my friends.|나는 친구들을 초대해요.|💌
+lead|v=이끌다, 앞장서다|Lead the way.|앞장서서 길을 안내해 줘.
+lie|v=눕다;v=거짓말하다;n=거짓말|Lie on the bed.|침대에 누워요.
+mix|v=섞다|Mix red and blue.|빨강과 파랑을 섞어요.
+nod|v=고개를 끄덕이다|She nods her head.|그녀가 고개를 끄덕여요.
+pack|v=짐을 싸다|Pack your bag.|가방을 싸요.
+pass|v=건네주다;v=지나가다;v=합격하다|Pass me the salt.|소금을 건네주세요.
+pop|v=펑 터지다|The balloon popped.|풍선이 펑 터졌어요.
+race|n=경주;v=경주하다|I won the race.|나는 경주에서 이겼어요.|🏁
+rest|v=쉬다;n=휴식;n=나머지|Let's rest here.|여기서 쉬자.
+scratch|v=긁다, 할퀴다|The cat scratches the sofa.|고양이가 소파를 긁어요.
+set|v=놓다, 차리다;n=한 묶음, 세트|Set the table.|식탁을 차려요.
+shut|v=닫다|Shut the door.|문을 닫아요.
+sneeze|v=재채기하다|I sneeze a lot.|나는 재채기를 많이 해요.|🤧
+cough|v=기침하다;n=기침|I have a cough.|나는 기침이 나요.
+splash|v=물을 튀기다|Kids splash in the pool.|아이들이 수영장에서 물을 튀겨요.|💦
+stir|v=젓다|Stir the soup.|국을 저어요.
+stretch|v=쭉 펴다, 늘이다|Stretch your arms.|팔을 쭉 펴요.
+sweep|v=쓸다|I sweep the floor.|나는 바닥을 쓸어요.|🧹
+swing|n=그네;v=흔들다, 흔들리다|I play on the swing.|나는 그네를 타요.
+tap|v=톡톡 두드리다|Tap the desk.|책상을 톡톡 두드려요.
+tear|v=찢다;n=눈물|Don't tear the page.|책장을 찢지 마.
+tickle|v=간지럽히다|Don't tickle me!|나를 간지럽히지 마!
+wave|v=손을 흔들다;n=파도|Wave goodbye.|손을 흔들어 인사해요.|👋
+weigh|v=무게를 달다, 무게가 ~이다|I weigh thirty kilograms.|나는 30킬로그램이에요.|⚖️
+wipe|v=닦다|Wipe the table.|식탁을 닦아요.
+care|v=돌보다, 마음을 쓰다;n=돌봄|I care for my pet.|나는 애완동물을 돌봐요.
+enjoy|v=즐기다|I enjoy reading.|나는 책 읽기를 즐겨요.
+miss|v=그리워하다;v=놓치다|I miss my grandma.|나는 할머니가 보고 싶어요.
+mind|n=마음, 생각;v=싫어하다, 꺼리다|I changed my mind.|나는 마음을 바꿨어요.
+mean|v=뜻하다;a=못된, 심술궂은|What does this word mean?|이 단어는 무슨 뜻이니?
+belong|v=~의 것이다, ~에 속하다|This bag belongs to me.|이 가방은 내 것이에요.
+grab|v=움켜잡다|Grab my hand.|내 손을 잡아.
+hunt|v=사냥하다|Lions hunt at night.|사자는 밤에 사냥해요.
+bark|v=짖다;n=나무껍질|Dogs bark.|개는 짖어요.
+roar|v=으르렁거리다|The lion roars.|사자가 으르렁거려요.
+crawl|v=기어가다|The baby crawls.|아기가 기어가요.
+march|v=행진하다;n=3월 (March)|The band marches.|악대가 행진해요.
+tiptoe|v=살금살금 걷다|I tiptoe to my room.|나는 내 방으로 살금살금 걸어가요.
+peek|v=살짝 엿보다|Don't peek!|엿보지 마!
+giggle|v=킥킥 웃다|The girls giggle.|여자아이들이 킥킥 웃어요.
+frown|v=얼굴을 찡그리다|Don't frown.|얼굴을 찡그리지 마.
+stare|v=빤히 쳐다보다|The cat stares at me.|고양이가 나를 빤히 쳐다봐요.
+shiver|v=덜덜 떨다|I shiver in the cold.|나는 추워서 덜덜 떨어요.
+yawn|v=하품하다|I yawn when I am sleepy.|나는 졸리면 하품해요.|🥱
+adult|n=어른|Ask an adult for help.|어른에게 도와 달라고 해요.
+stranger|n=낯선 사람|Don't follow a stranger.|낯선 사람을 따라가지 마.
+guest|n=손님|We have a guest.|우리 집에 손님이 왔어요.
+crowd|n=많은 사람들, 군중|There is a big crowd.|사람들이 많이 모여 있어요.
+twin|n=쌍둥이|They are twins.|그들은 쌍둥이예요.
+classmate|n=반 친구|He is my classmate.|그는 내 반 친구예요.
+principal|n=교장 선생님|The principal is kind.|교장 선생님은 친절해요.
+coach|n=코치, 감독|The coach helps the team.|코치는 팀을 도와요.
+captain|n=선장, 주장|He is the captain.|그는 주장이에요.
+clown|n=광대|The clown is funny.|광대가 웃겨요.|🤡
+pirate|n=해적|The pirate has a ship.|해적은 배가 있어요.|🏴‍☠️
+giant|n=거인;a=아주 큰|The giant is very tall.|거인은 키가 아주 커요.
+fairy|n=요정|The fairy has wings.|요정은 날개가 있어요.|🧚
+dragon|n=용|The dragon breathes fire.|용은 불을 내뿜어요.|🐉
+wizard|n=마법사|The wizard has a wand.|마법사는 지팡이가 있어요.|🧙
+witch|n=마녀|The witch has a broom.|마녀는 빗자루가 있어요.
+castle|n=성|The king lives in a castle.|왕은 성에 살아요.|🏰
+crown|n=왕관|The queen wears a crown.|여왕은 왕관을 써요.|👑
+treasure|n=보물|We found the treasure.|우리는 보물을 찾았어요.|💎
+sword|n=칼, 검|The knight has a sword.|기사는 칼이 있어요.|🗡️
+knight|n=기사 (옛날 군인)|The knight is brave.|기사는 용감해요.
+tower|n=탑|The tower is tall.|탑이 높아요.|🗼
+tent|n=텐트, 천막|We sleep in a tent.|우리는 텐트에서 자요.|⛺
+cabin|n=통나무집, 오두막|We stay in a cabin.|우리는 오두막에서 지내요.
+barn|n=헛간, 외양간|The cows are in the barn.|소들은 외양간에 있어요.
+fence|n=울타리|The dog jumps over the fence.|개가 울타리를 뛰어넘어요.
+gate|n=대문, 문|Close the gate.|대문을 닫아요.
+yard|n=마당|We play in the yard.|우리는 마당에서 놀아요.
+porch|n=현관 앞 마루|Grandpa sits on the porch.|할아버지는 현관 앞에 앉아 있어요.
+garage|n=차고|The car is in the garage.|차는 차고에 있어요.
+attic|n=다락방|Old toys are in the attic.|오래된 장난감들은 다락방에 있어요.
+basement|n=지하실|The basement is dark.|지하실은 어두워요.
+stairs|n=계단|Walk up the stairs.|계단을 걸어 올라가요.
+hall|n=복도;n=큰 방, 강당|Walk in the hall.|복도에서는 걸어 다녀요.
+closet|n=옷장, 벽장|My coat is in the closet.|내 외투는 옷장에 있어요.
+drawer|n=서랍|Socks are in the drawer.|양말은 서랍에 있어요.
+shelf|n=선반|The book is on the shelf.|책은 선반 위에 있어요.
+blanket|n=담요, 이불|The blanket is warm.|담요가 따뜻해요.
+pillow|n=베개|My pillow is soft.|내 베개는 부드러워요.
+curtain|n=커튼|Open the curtains.|커튼을 걷어요.
+carpet|n=카펫, 양탄자|The cat sleeps on the carpet.|고양이가 카펫 위에서 자요.
+tub|n=욕조, 통|I play in the tub.|나는 욕조에서 놀아요.|🛁
+oven|n=오븐|The cake is in the oven.|케이크가 오븐 안에 있어요.
+stove|n=가스레인지, 난로|The pot is on the stove.|냄비가 가스레인지 위에 있어요.
+refrigerator|n=냉장고|Milk is in the refrigerator.|우유는 냉장고에 있어요.
+pan|n=프라이팬|Fry an egg in the pan.|프라이팬에 달걀을 부쳐요.|🍳
+pot|n=냄비;n=화분|The soup is in the pot.|국이 냄비에 있어요.
+plate|n=접시|Put the food on a plate.|음식을 접시에 담아요.
+napkin|n=냅킨|Wipe your mouth with a napkin.|냅킨으로 입을 닦아요.
+jar|n=유리병, 단지|Jam is in the jar.|잼이 병에 들어 있어요.
+lid|n=뚜껑|Put the lid on.|뚜껑을 덮어요.
+bucket|n=양동이|Fill the bucket with water.|양동이에 물을 채워요.|🪣
+broom|n=빗자루|Sweep with a broom.|빗자루로 쓸어요.|🧹
+ladder|n=사다리|Climb the ladder.|사다리를 올라가요.|🪜
+hammer|n=망치|Dad uses a hammer.|아빠는 망치를 써요.|🔨
+nail|n=못;n=손톱|Hit the nail.|못을 박아요.
+rope|n=밧줄|Pull the rope.|밧줄을 당겨요.
+string|n=끈, 줄|Tie it with string.|끈으로 묶어요.
+wheel|n=바퀴|A bike has two wheels.|자전거는 바퀴가 두 개예요.|🛞
+engine|n=엔진|The car has an engine.|자동차에는 엔진이 있어요.
+seat|n=자리, 좌석|Take a seat.|자리에 앉아요.|💺
+belt|n=허리띠, 벨트|Wear your seat belt.|안전벨트를 매요.
+helmet|n=헬멧|Wear a helmet.|헬멧을 써요.|⛑️
+backpack|n=책가방, 배낭|My backpack is heavy.|내 책가방은 무거워요.|🎒
+wallet|n=지갑|Dad lost his wallet.|아빠가 지갑을 잃어버렸어요.|👛
+mask|n=마스크, 가면|I wear a mask.|나는 마스크를 써요.|😷
+scarf|n=목도리|I wear a scarf.|나는 목도리를 해요.|🧣
+mittens|n=벙어리장갑|My mittens are warm.|내 벙어리장갑은 따뜻해요.|🧤
+pajamas|n=잠옷|I put on my pajamas.|나는 잠옷을 입어요.
+uniform|n=유니폼, 제복|The police wear a uniform.|경찰은 제복을 입어요.
+costume|n=분장 옷, 의상|I wear a tiger costume.|나는 호랑이 옷을 입어요.
+chin|n=턱|Touch your chin.|턱을 만져 봐.
+cheek|n=볼, 뺨|Her cheeks are red.|그녀의 볼이 빨개요.
+lip|n=입술|My lips are dry.|내 입술이 말랐어요.
+tongue|n=혀|Stick out your tongue.|혀를 내밀어 봐.|👅
+thumb|n=엄지손가락|Thumbs up!|엄지 척!|👍
+elbow|n=팔꿈치|I hurt my elbow.|나는 팔꿈치를 다쳤어요.
+ankle|n=발목|My ankle hurts.|발목이 아파요.
+chest|n=가슴;n=큰 상자|The treasure is in the chest.|보물이 상자 안에 있어요.
+belly|n=배 (몸)|My belly is full.|나는 배가 불러요.
+squirrel|n=다람쥐|The squirrel eats a nut.|다람쥐가 견과를 먹어요.|🐿️
+owl|n=부엉이, 올빼미|The owl is awake at night.|부엉이는 밤에 깨어 있어요.|🦉
+eagle|n=독수리|The eagle flies high.|독수리는 높이 날아요.|🦅
+crow|n=까마귀|The crow is black.|까마귀는 검어요.
+parrot|n=앵무새|The parrot can talk.|앵무새는 말을 할 수 있어요.|🦜
+goose|n=거위|The goose is white.|거위는 하얘요.|🪿
+turkey|n=칠면조|We eat turkey.|우리는 칠면조 고기를 먹어요.|🦃
+hen|n=암탉|The hen lays eggs.|암탉은 알을 낳아요.|🐔
+rooster|n=수탉|The rooster wakes us up.|수탉이 우리를 깨워요.|🐓
+chick|n=병아리|The chick is yellow.|병아리는 노란색이에요.|🐥
+calf|n=송아지|The calf drinks milk.|송아지가 젖을 먹어요.
+lamb|n=새끼 양|The lamb is soft.|새끼 양은 보들보들해요.|🐑
+pony|n=조랑말|I ride a pony.|나는 조랑말을 타요.
+donkey|n=당나귀|The donkey carries bags.|당나귀가 짐을 날라요.|🫏
+camel|n=낙타|A camel lives in the desert.|낙타는 사막에 살아요.|🐫
+hippo|n=하마|The hippo is in the water.|하마가 물속에 있어요.|🦛
+gorilla|n=고릴라|The gorilla is strong.|고릴라는 힘이 세요.|🦍
+koala|n=코알라|The koala sleeps a lot.|코알라는 잠을 많이 자요.|🐨
+raccoon|n=너구리|The raccoon washes its food.|너구리는 먹이를 씻어 먹어요.|🦝
+hamster|n=햄스터|My hamster is small.|내 햄스터는 작아요.|🐹
+lizard|n=도마뱀|The lizard sits on a rock.|도마뱀이 바위 위에 앉아 있어요.|🦎
+crocodile|n=악어|The crocodile has big teeth.|악어는 이빨이 커요.|🐊
+alligator|n=악어|The alligator swims.|악어가 헤엄쳐요.|🐊
+octopus|n=문어|An octopus has eight arms.|문어는 다리가 여덟 개예요.|🐙
+crab|n=게|The crab walks sideways.|게는 옆으로 걸어요.|🦀
+jellyfish|n=해파리|A jellyfish is soft.|해파리는 말랑말랑해요.|🪼
+seal|n=물개, 바다표범|The seal claps.|물개가 손뼉을 쳐요.|🦭
+snail|n=달팽이|The snail is slow.|달팽이는 느려요.|🐌
+worm|n=지렁이, 벌레|The bird eats a worm.|새가 지렁이를 먹어요.|🪱
+ladybug|n=무당벌레|The ladybug is red.|무당벌레는 빨개요.|🐞
+grasshopper|n=메뚜기|The grasshopper jumps.|메뚜기가 뛰어요.|🦗
+mosquito|n=모기|A mosquito bit me.|모기가 나를 물었어요.|🦟
+moth|n=나방|A moth flies to the light.|나방이 불빛으로 날아가요.
+pumpkin|n=호박|The pumpkin is orange.|호박은 주황색이에요.|🎃
+cucumber|n=오이|The cucumber is green.|오이는 초록색이에요.|🥒
+lettuce|n=상추|I put lettuce in my sandwich.|나는 샌드위치에 상추를 넣어요.|🥬
+cabbage|n=양배추|Rabbits eat cabbage.|토끼는 양배추를 먹어요.
+pea|n=완두콩|Peas are green.|완두콩은 초록색이에요.
+mushroom|n=버섯|I don't like mushrooms.|나는 버섯을 좋아하지 않아요.|🍄
+garlic|n=마늘|Garlic smells strong.|마늘은 냄새가 강해요.|🧄
+pepper|n=후추;n=고추, 피망|Add some pepper.|후추를 조금 넣어요.
+cherry|n=체리, 버찌|The cherry is red.|체리는 빨개요.|🍒
+pineapple|n=파인애플|Pineapple is sweet.|파인애플은 달아요.|🍍
+mango|n=망고|I like mango juice.|나는 망고 주스를 좋아해요.|🥭
+melon|n=멜론|The melon is sweet.|멜론은 달아요.|🍈
+blueberry|n=블루베리|I pick blueberries.|나는 블루베리를 따요.|🫐
+nut|n=견과 (호두, 밤 같은 열매)|Squirrels eat nuts.|다람쥐는 견과를 먹어요.|🌰
+peanut|n=땅콩|I like peanut butter.|나는 땅콩버터를 좋아해요.|🥜
+cereal|n=시리얼|I eat cereal with milk.|나는 우유에 시리얼을 먹어요.|🥣
+pancake|n=팬케이크|Dad makes pancakes.|아빠가 팬케이크를 만들어요.|🥞
+toast|n=구운 빵, 토스트|I eat toast with jam.|나는 토스트에 잼을 발라 먹어요.
+jam|n=잼|I like strawberry jam.|나는 딸기잼을 좋아해요.
+jelly|n=젤리, 잼|I like grape jelly.|나는 포도 젤리를 좋아해요.
+sausage|n=소시지|I eat a sausage.|나는 소시지를 먹어요.|🌭
+popcorn|n=팝콘|We eat popcorn.|우리는 팝콘을 먹어요.|🍿
+pie|n=파이|Mom bakes an apple pie.|엄마가 사과 파이를 구워요.|🥧
+donut|n=도넛|I want a donut.|나는 도넛을 먹고 싶어요.|🍩
+muffin|n=머핀|I eat a muffin.|나는 머핀을 먹어요.|🧁
+lemonade|n=레모네이드|I drink lemonade.|나는 레모네이드를 마셔요.|🍋
+flour|n=밀가루|We need flour for bread.|빵을 만들려면 밀가루가 필요해요.
+oil|n=기름|Put oil in the pan.|프라이팬에 기름을 둘러요.
+recipe|n=요리법|Read the recipe.|요리법을 읽어요.
+meal|n=식사, 끼니|We eat three meals a day.|우리는 하루에 세 끼를 먹어요.
+dessert|n=후식, 디저트|What is for dessert?|후식은 뭐예요?|🍮
+straw|n=빨대;n=지푸라기|I drink with a straw.|나는 빨대로 마셔요.
+candle|n=초, 양초|Blow out the candle.|촛불을 불어서 꺼요.|🕯️
+bell|n=종|The bell rings.|종이 울려요.|🔔
+whistle|n=호루라기;v=휘파람을 불다|The coach blows a whistle.|코치가 호루라기를 불어요.
+flashlight|n=손전등|Turn on the flashlight.|손전등을 켜요.|🔦
+envelope|n=봉투|Put the letter in an envelope.|편지를 봉투에 넣어요.|✉️
+stamp|n=우표;n=도장|Put a stamp on the letter.|편지에 우표를 붙여요.
+package|n=소포, 꾸러미|A package came for me.|나에게 소포가 왔어요.|📦
+sign|n=표지판, 간판;v=이름을 쓰다|Read the sign.|표지판을 읽어요.|🪧
+message|n=전하는 말, 메시지|I got a message.|나는 메시지를 받았어요.
+note|n=쪽지, 메모;n=음표|Mom left a note.|엄마가 쪽지를 남겼어요.
+diary|n=일기|I write in my diary.|나는 일기를 써요.
+journal|n=일지, 일기|Write in your journal.|일지에 써요.
+magazine|n=잡지|I read a magazine.|나는 잡지를 읽어요.
+newspaper|n=신문|Grandpa reads the newspaper.|할아버지는 신문을 읽어요.|📰
+internet|n=인터넷|I use the internet.|나는 인터넷을 써요.|🌐
+video|n=영상, 동영상|We watch a video.|우리는 영상을 봐요.
+photo|n=사진|Take a photo.|사진을 찍어요.|📸
+project|n=과제, 프로젝트|I made a science project.|나는 과학 과제를 만들었어요.
+recess|n=쉬는 시간|We play at recess.|우리는 쉬는 시간에 놀아요.
+cafeteria|n=급식실, 구내식당|We eat in the cafeteria.|우리는 급식실에서 먹어요.
+gym|n=체육관|We play in the gym.|우리는 체육관에서 운동해요.
+field trip|n=현장 체험 학습|We go on a field trip.|우리는 현장 체험 학습을 가요.|🚌
+quiz|n=쪽지 시험, 퀴즈|We have a quiz today.|오늘은 쪽지 시험이 있어요.
+score|n=점수|What is your score?|네 점수는 몇 점이니?
+goal|n=목표;n=골|My goal is to read ten books.|내 목표는 책 열 권을 읽는 거예요.|🥅
+skill|n=기술, 잘하는 능력|Reading is a skill.|읽기는 기술이에요.
+effort|n=노력|Good effort!|열심히 했구나!
+choice|n=선택|It is your choice.|네가 고르는 거야.
+chance|n=기회|Give me one more chance.|한 번만 더 기회를 줘.
+reason|n=이유, 까닭|Tell me the reason.|이유를 말해 줘.
+result|n=결과|What is the result?|결과가 어떻게 됐니?
+kindness|n=친절|Thank you for your kindness.|친절하게 대해 줘서 고마워요.
+feeling|n=느낌, 기분|How is your feeling?|기분이 어떠니?
+trouble|n=곤란한 일, 말썽|I am in trouble.|나는 곤란한 일이 생겼어요.
+danger|n=위험|Stay away from danger.|위험한 곳에 가지 마.
+adventure|n=모험|We go on an adventure.|우리는 모험을 떠나요.
+journey|n=긴 여행|It was a long journey.|긴 여행이었어요.
+proud|a=자랑스러운|I am proud of you.|나는 네가 자랑스러워.
+nervous|a=긴장한, 떨리는|I am nervous.|나는 떨려요.
+upset|a=속상한|Don't be upset.|속상해하지 마.
+lonely|a=외로운|I feel lonely.|나는 외로워요.
+calm|a=차분한, 잔잔한|Stay calm.|차분하게 있어.
+curious|a=궁금해하는, 호기심 많은|I am curious about space.|나는 우주가 궁금해요.
+gentle|a=부드러운, 순한|Be gentle with the baby.|아기를 살살 다뤄요.
+honest|a=정직한|Be honest.|정직하게 말해요.
+helpful|a=도움이 되는|You are very helpful.|너는 정말 도움이 돼.
+silly|a=우스꽝스러운, 엉뚱한|That is a silly hat.|그것은 우스꽝스러운 모자야.
+grumpy|a=투덜대는, 심술 난|The bear is grumpy.|그 곰은 심술이 났어요.
+lazy|a=게으른|The cat is lazy.|그 고양이는 게을러요.
+wise|a=지혜로운|The owl is wise.|부엉이는 지혜로워요.
+noisy|a=시끄러운|The room is noisy.|방이 시끄러워요.
+huge|a=아주 큰|The whale is huge.|고래는 아주 커요.
+tiny|a=아주 작은|The ant is tiny.|개미는 아주 작아요.
+narrow|a=좁은|The road is narrow.|길이 좁아요.
+thick|a=두꺼운|This book is thick.|이 책은 두꺼워요.
+sharp|a=날카로운, 뾰족한|The knife is sharp.|칼이 날카로워요.
+smooth|a=매끄러운|The stone is smooth.|돌이 매끄러워요.
+rough|a=거친, 까칠까칠한|The rock is rough.|바위가 거칠어요.
+sticky|a=끈적끈적한|My hands are sticky.|내 손이 끈적끈적해요.
+shiny|a=반짝이는|The coin is shiny.|동전이 반짝여요.|✨
+fluffy|a=폭신폭신한|The cloud looks fluffy.|구름이 폭신폭신해 보여요.
+wild|a=야생의, 사나운|Lions are wild animals.|사자는 야생 동물이에요.
+tame|a=길들여진, 순한|The horse is tame.|그 말은 길들여졌어요.
+ripe|a=잘 익은|The banana is ripe.|바나나가 잘 익었어요.
+frozen|a=언, 얼어붙은|The lake is frozen.|호수가 얼었어요.
+broken|a=부서진, 고장 난|My toy is broken.|내 장난감이 부서졌어요.
+favorite food|x=가장 좋아하는 음식|Pizza is my favorite food.|피자는 내가 가장 좋아하는 음식이에요.
+simple|a=간단한, 쉬운|It is a simple question.|그것은 간단한 문제예요.
+perfect|a=완벽한|Your answer is perfect.|네 답은 완벽해.|💯
+terrible|a=끔찍한, 아주 나쁜|The weather is terrible.|날씨가 아주 나빠요.
+wonderful|a=아주 멋진, 훌륭한|What a wonderful day!|정말 멋진 날이야!
+amazing|a=놀라운, 굉장한|That is amazing!|정말 놀라워!
+strange|a=이상한, 낯선|I heard a strange sound.|나는 이상한 소리를 들었어요.
+common|a=흔한|Dogs are common pets.|개는 흔한 애완동물이에요.
+enormous|a=엄청나게 큰|The dinosaur was enormous.|공룡은 엄청나게 컸어요.
+ancient|a=아주 오래된, 옛날의|The castle is ancient.|그 성은 아주 오래됐어요.
+modern|a=현대의, 요즘의|This is a modern building.|이것은 요즘 지은 건물이에요.
+possible|a=할 수 있는, 가능한|Is it possible?|그것이 가능하니?
+main idea|x=중심 생각|Find the main idea.|중심 생각을 찾아요.
+`;
+/* 좋은 뜻과 나쁜 뜻을 함께 가진 단어는 학습용 뜻만 보여 준다 (추천 목록에는 나오지 않는다) */
+const SOFT_RAW = `
+ass|n=당나귀|The ass carries a bag.|당나귀가 짐을 날라요.|🫏
+cock|n=수탉|The cock crows in the morning.|수탉은 아침에 울어요.|🐓
+tit|n=박새 (작은 새)|A tit sits on the tree.|박새가 나무에 앉아 있어요.|🐦
+hoe|n=괭이 (땅을 파는 도구)|The farmer uses a hoe.|농부는 괭이를 써요.
+bloody|a=피가 묻은|His knee is bloody.|그의 무릎에 피가 났어요.
+screw|n=나사;v=돌려서 조이다|I need a screw.|나는 나사가 필요해요.|🔩
+prick|v=콕 찌르다|The rose pricks my finger.|장미 가시가 내 손가락을 찔러요.
+beaver|n=비버|The beaver builds a dam.|비버는 댐을 지어요.|🦫
+booty|n=보물, 빼앗은 물건|The pirates hid the booty.|해적들이 보물을 숨겼어요.
+balls|n=공들|I have three balls.|나는 공이 세 개 있어요.|⚽
+nuts|n=견과, 땅콩 같은 열매|Squirrels eat nuts.|다람쥐는 견과를 먹어요.|🥜
+jerk|v=홱 잡아당기다|Don't jerk the rope.|밧줄을 홱 잡아당기지 마.
+`;
+const KIDS_POS = {n:'명사',v:'동사',a:'형용사',d:'부사',p:'전치사',r:'대명사',c:'접속사',i:'감탄사',m:'수',t:'한정사',x:'표현'};
+/* 모양이 불규칙하게 바뀌는 말 → 기본 모양 */
+const IRREGULAR = {went:'go',gone:'go',goes:'go',came:'come',ate:'eat',eaten:'eat',ran:'run',saw:'see',seen:'see',made:'make',said:'say',took:'take',taken:'take',got:'get',had:'have',did:'do',does:'do',done:'do',was:'be',were:'be',been:'be',gave:'give',given:'give',told:'tell',found:'find',wrote:'write',written:'write',sang:'sing',sung:'sing',swam:'swim',drank:'drink',slept:'sleep',sat:'sit',stood:'stand',flew:'fly',drew:'draw',grew:'grow',threw:'throw',bought:'buy',sold:'sell',knew:'know',known:'know',heard:'hear',felt:'feel',kept:'keep',left:'leave',lost:'lose',met:'meet',paid:'pay',put:'put',read:'read',rode:'ride',sent:'send',spoke:'speak',taught:'teach',thought:'think',understood:'understand',woke:'wake',won:'win',built:'build',caught:'catch',chose:'choose',began:'begin',brought:'bring',forgot:'forget',held:'hold',children:'child',men:'man',women:'woman',feet:'foot',teeth:'tooth',mice:'mouse',leaves:'leaf',knives:'knife',better:'good',best:'good',worse:'bad',worst:'bad'};
+
+const KIDS = (()=>{
+  const map = new Map(), list = [], koIndex = new Map();
+  function parse(raw, soft){
+    raw.split('\n').forEach(line=>{
+      const f = line.split('|'); if(f.length < 2) return;
+      const word = f[0].trim(); if(!word) return;
+      const meanings = f[1].split(';').map((s,i)=>{
+        const k = s.indexOf('=');
+        return {pos:KIDS_POS[s.slice(0,k).trim()]||'뜻', ko:s.slice(k+1).trim(), en:'',
+                example:i===0?(f[2]||'').trim():'', exampleKo:i===0?(f[3]||'').trim():''};
+      }).filter(m=>m.ko);
+      if(!meanings.length) return;
+      const e = {word, meanings, emoji:(f[4]||'').trim(), soft:!!soft};
+      const key = word.toLowerCase();
+      if(map.has(key)) return;
+      map.set(key, e);
+      if(!soft){
+        list.push(e);
+        meanings.forEach((m,mi)=> koKeys(m.ko).forEach(k=>{
+          const old = koIndex.get(k);
+          if(!old || mi < old.mi) koIndex.set(k, {e, mi});       // 그 뜻이 첫 번째 뜻인 단어를 먼저
+        }));
+      }
+    });
+  }
+  /** "크다, 큰 (설명)" → ["크다","큰"] */
+  function koKeys(ko){
+    return String(ko).replace(/\([^)]*\)/g,'').split(',').map(s=>s.replace(/~/g,'').trim()).filter(Boolean);
+  }
+  parse(KIDS_RAW, false); parse(KIDS_RAW2, false); parse(SOFT_RAW, true);
+
+  /** 모양이 바뀐 말(apples, running)의 기본 모양 후보 */
+  function baseForms(w){
+    const out = []; const add = s=>{ if(s && s.length >= 2 && s !== w) out.push(s); };
+    if(IRREGULAR[w]) add(IRREGULAR[w]);
+    const undouble = s=> /([a-z])\1$/.test(s) ? s.slice(0,-1) : '';
+    if(w.endsWith('ies')) add(w.slice(0,-3)+'y');
+    if(w.endsWith('es')) add(w.slice(0,-2));
+    if(w.endsWith('s') && !w.endsWith('ss')) add(w.slice(0,-1));
+    if(w.endsWith('ing')){ const s=w.slice(0,-3); add(s); add(s+'e'); add(undouble(s)); }
+    if(w.endsWith('ied')) add(w.slice(0,-3)+'y');
+    if(w.endsWith('ed')){ const s=w.slice(0,-2); add(s); add(s+'e'); add(undouble(s)); }
+    return out;
+  }
+  /** 영어 단어 찾기. 없으면 null */
+  function find(input){
+    const w = String(input||'').trim().toLowerCase().replace(/’/g,"'").replace(/\s+/g,' ');
+    if(!w) return null;
+    if(map.has(w)) return {entry:map.get(w), from:''};
+    for(const b of baseForms(w)){ if(map.has(b) && !map.get(b).soft) return {entry:map.get(b), from:w}; }
+    return null;
+  }
+  /** 한글 뜻으로 찾기. 없으면 null */
+  function findKo(input){
+    const k = String(input||'').trim();
+    if(!k) return null;
+    if(koIndex.has(k)) return koIndex.get(k).e;
+    if(k.length < 2) return null;
+    let best = null;
+    koIndex.forEach((v,key)=>{ if(key.startsWith(k) && (!best || v.mi < best.mi)) best = v; });
+    return best ? best.e : null;
+  }
+  /** 글자를 치는 동안 보여 줄 추천 단어 */
+  function suggest(input, max){
+    const q = String(input||'').trim(); if(!q) return [];
+    const out = [];
+    if(/[가-힣]/.test(q)){
+      const exact=[], starts=[], has=[];
+      list.forEach(e=>{
+        const keys = e.meanings.flatMap(m=>koKeys(m.ko));
+        if(keys.includes(q)) exact.push(e);
+        else if(keys.some(k=>k.startsWith(q))) starts.push(e);
+        else if(q.length>=2 && keys.some(k=>k.includes(q))) has.push(e);
+      });
+      return exact.concat(starts, has).slice(0, max);
+    }
+    const lq = q.toLowerCase();
+    list.forEach(e=>{ if(e.word.toLowerCase().startsWith(lq)) out.push(e); });
+    out.sort((a,b)=>a.word.length-b.word.length);
+    return out.slice(0, max);
+  }
+  /** 사전 항목 → 검색 결과 모양 */
+  function result(entry, from){
+    return {word:entry.word, phonetic:'', audio:'', emoji:entry.emoji||emojiFor(entry.word),
+            koWord:entry.meanings[0].ko, meanings:entry.meanings.map(m=>Object.assign({},m)),
+            note:from?`${from} → ${entry.word}`:'', source:'kids'};
+  }
+  return {find, findKo, suggest, result, size:list.length, list, map};
+})();
+
+/* ================= 네이버 사전 열기 ================= */
+function naverURL(word){
+  const w = String(word||'').trim();
+  return /[가-힣]/.test(w)
+    ? `https://ko.dict.naver.com/#/search?query=${encodeURIComponent(w)}`
+    : `https://en.dict.naver.com/#/search?query=${encodeURIComponent(w)}`;
+}
+function openNaver(word){ window.open(naverURL(word), '_blank', 'noopener'); }
+
+/* ================= 발음 ================= */
+/* =========================================================
+   🔊 발음 재생 — 3단계로 반드시 소리가 나게 한다
+   1) 사전 녹음 파일 : 미리 내려받아 재생 가능한 것으로 확인된 경우에만 사용
+   2) 기기 음성합성  : 버튼을 누른 즉시 실행 (iOS 제스처 제한 때문에 기다리지 않는다)
+   3) 예비 음성      : 음성합성이 없거나 시작되지 않을 때
+   ========================================================= */
+let voices=[];
+function loadVoices(){ try{ voices = speechSynthesis.getVoices()||[]; }catch(e){ voices=[]; } }
+if(window.speechSynthesis){ loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
+
+/** 오디오 주소를 미리 검사해 둔다(깨진 링크를 재생 시점에 알게 되는 일을 막는다) */
+const audioBank = new Map();
+function prepareAudio(url){
+  if(!url) return null;
+  const u = url.startsWith('//') ? 'https:'+url : url;
+  if(audioBank.has(u)) return audioBank.get(u);
+  const el = new Audio();
+  const entry = {el, ok:null};                       // null=확인 중, true=재생 가능, false=깨짐
+  el.preload = 'auto';
+  el.addEventListener('canplaythrough', ()=>{ entry.ok = true; }, {once:true});
+  el.addEventListener('error',          ()=>{ entry.ok = false; }, {once:true});
+  el.src = u;
+  try{ el.load(); }catch(e){ entry.ok = false; }
+  setTimeout(()=>{ if(entry.ok === null) entry.ok = false; }, 4000);   // 응답 없으면 깨진 것으로 본다
+  audioBank.set(u, entry);
+  return entry;
+}
+
+function pickVoice(){
+  if(!voices.length) loadVoices();
+  return voices.find(v=>/en[-_]US/i.test(v.lang) && /google|samantha|natural|premium/i.test(v.name))
+      || voices.find(v=>/en[-_]US/i.test(v.lang))
+      || voices.find(v=>/^en/i.test(v.lang))
+      || null;
+}
+function backupTTS(text){                            // 3단계
+  try{
+    const a = new Audio(`https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&tl=en&q=${encodeURIComponent(text)}`);
+    const p = a.play();
+    if(p && p.catch) p.catch(()=>toast('소리를 낼 수 없어요. 기기 음량과 무음 스위치를 확인해 주세요'));
+  }catch(e){ toast('소리를 낼 수 없어요. 기기 음량을 확인해 주세요'); }
+}
+function ttsSpeak(text){                             // 2단계
+  if(!('speechSynthesis' in window)) return backupTTS(text);
+  try{
+    if(speechSynthesis.speaking || speechSynthesis.pending) speechSynthesis.cancel();
+    speechSynthesis.resume();                        // 크롬이 일시정지 상태로 멈춰 있는 경우 대비
+    const u = new SpeechSynthesisUtterance(text);
+    u.lang='en-US'; u.rate=.8; u.pitch=1; u.volume=1;
+    const v = pickVoice(); if(v) u.voice = v;
+    let started = false;
+    u.onstart = ()=>{ started = true; };
+    u.onerror = ()=>{ if(!started) backupTTS(text); };
+    speechSynthesis.speak(u);
+    setTimeout(()=>{ if(!started && !speechSynthesis.speaking) backupTTS(text); }, 1300);
+  }catch(e){ backupTTS(text); }
+}
+/** 카드/검색 화면에서 부르는 함수 */
+function speak(text, audioUrl){
+  if(!text) return;
+  const entry = audioUrl ? prepareAudio(audioUrl) : null;
+  if(entry && entry.ok === true){                    // 1단계: 재생 가능이 확인된 파일만
+    try{
+      entry.el.currentTime = 0;
+      const p = entry.el.play();
+      if(p && p.catch) p.catch(()=>{ entry.ok = false; ttsSpeak(text); });   // 그래도 실패하면 즉시 대체
+      return;
+    }catch(e){ entry.ok = false; }
+  }
+  ttsSpeak(text);                                    // 확인 안 됐거나 깨진 파일이면 기다리지 않고 바로 합성
+}
+
+/* ================= 번역 계층 ================= */
+async function fetchJSON(url,opt,ms=15000){
+  const c=new AbortController(), t=setTimeout(()=>c.abort(),ms);
+  try{ return await fetch(url, Object.assign({signal:c.signal}, opt||{})); } finally{ clearTimeout(t); }
+}
+async function gTrans(text,sl,tl,withDict){
+  const dt = withDict?'dt=t&dt=bd':'dt=t';
+  const url=`https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${tl}&${dt}&dj=1&q=${encodeURIComponent(text.slice(0,400))}`;
+  const r=await fetchJSON(url,null,12000); if(!r.ok) throw new Error('g '+r.status); return await r.json();
+}
+async function myMemory(text,from,to){
+  const r=await fetchJSON(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(text.slice(0,450))}&langpair=${from}|${to}`,null,12000);
+  if(!r.ok) throw new Error('mm'); const j=await r.json();
+  const t=(j.responseData&&j.responseData.translatedText)||'';
+  if(!t||/MYMEMORY WARNING|INVALID|QUERY LENGTH/i.test(t)) throw new Error('mm limit'); return t;
+}
+async function tr(text,from,to){
+  if(!text) return '';
+  try{ const j=await gTrans(text,from,to,false); const t=(j.sentences||[]).map(s=>s.trans||'').join('').trim(); if(t) return t; }catch(e){}
+  try{ return await myMemory(text,from,to); }catch(e){ return ''; }
+}
+async function koGlossary(word){
+  const j=await gTrans(word,'en','ko',true);
+  const main=(j.sentences||[]).map(s=>s.trans||'').join('').trim();
+  let dict=(j.dict||[]).map(d=>{
+    // entry 에는 뜻마다 사용 빈도 점수(score)와, 그 뜻을 다시 영어로 옮긴 낱말(back)이 들어 있다
+    let items=(d.entry||[]).map(e=>({ko:String(e.word||'').trim(), score:+e.score||0,
+                                     back:(e.reverse_translation||[]).map(x=>String(x).toLowerCase())}));
+    if(!items.length) items=(d.terms||[]).map(t=>({ko:String(t||'').trim(), score:0, back:[]}));
+    items=items.filter(t=>t.ko && !SAFE.bad(t.ko));                // 🛡 부적절한 뜻 제외
+    items.sort((a,b)=>b.score-a.score);                            // 자주 쓰는 뜻부터
+    const top=items.length?items[0].score:0;
+    items=items.filter((t,i)=>i===0 || !top || t.score>=top*0.02).slice(0,6);   // 거의 안 쓰는 뜻은 뺀다
+    return {pos:String(d.pos||'').toLowerCase(), items, terms:items.map(t=>t.ko), top};
+  }).filter(d=>d.items.length);
+  dict.sort((a,b)=>b.top-a.top);
+  const best=dict.length?dict[0].top:0;
+  dict=dict.filter((d,i)=>i===0 || !best || d.top>=best*0.02);
+  // 대표 번역과 같은 뜻이 있으면 그 뜻을 맨 앞으로
+  const gi=dict.findIndex(d=>d.terms.includes(main));
+  if(gi>=0){
+    const g=dict.splice(gi,1)[0];
+    const ii=g.terms.indexOf(main); g.items.unshift(g.items.splice(ii,1)[0]); g.terms=g.items.map(t=>t.ko);
+    dict.unshift(g);
+  }
+  return {main, dict};
+}
+
+/* ================= 영어 사전 ================= */
+const POS_KO={noun:'명사',verb:'동사',adjective:'형용사',adverb:'부사',pronoun:'대명사',preposition:'전치사',conjunction:'접속사',interjection:'감탄사',exclamation:'감탄사',determiner:'한정사',numeral:'수사',article:'관사',abbreviation:'줄임말',phrase:'표현'};
+const EMOJI={apple:'🍎',banana:'🍌',cat:'🐱',dog:'🐶',book:'📗',school:'🏫',water:'💧',sun:'☀️',moon:'🌙',star:'⭐',tree:'🌳',flower:'🌸',house:'🏠',home:'🏠',car:'🚗',bus:'🚌',train:'🚆',plane:'✈️',ship:'🚢',fish:'🐟',bird:'🐦',rabbit:'🐰',bear:'🐻',lion:'🦁',tiger:'🐯',elephant:'🐘',milk:'🥛',bread:'🍞',rice:'🍚',egg:'🥚',cake:'🍰',candy:'🍬',pencil:'✏️',pen:'🖊️',bag:'🎒',shoes:'👟',hat:'🧢',ball:'⚽',game:'🎮',music:'🎵',friend:'🧒',friendly:'😊',family:'👨‍👩‍👧',mother:'👩',father:'👨',teacher:'👩‍🏫',doctor:'🧑‍⚕️',run:'🏃',jump:'🤸',eat:'🍽️',sleep:'😴',study:'📖',play:'🧸',happy:'😄',sad:'😢',angry:'😠',love:'❤️',rain:'🌧️',snow:'❄️',wind:'🌬️',cloud:'☁️',sea:'🌊',mountain:'⛰️',park:'🏞️',time:'⏰',day:'🌞',night:'🌛',kind:'🤗',smile:'😊'};
+const emojiFor=w=>EMOJI[String(w).toLowerCase()]||'⭐';
+const RARE=/^\(|\b(collective|archaic|obsolete|rare|dated|slang|vulgar|dialect|historical|poetic|nautical|heraldry|figuratively|Internet|colloquial|chiefly|regional|proscribed|nonstandard)\b/i;
+// 옛말·속어 표시가 붙은 뜻풀이는 뒤로 미루지 않고 아예 뺀다
+const OLD_OR_RUDE=/^\([^)]*\b(archaic|obsolete|dated|slang|vulgar|derogatory|offensive|pejorative|proscribed|nonstandard|dialect\w*)\b/i;
+/** 사전에 실린 순서(대표 뜻이 앞)를 지키되, 드문 쓰임 표시가 있으면 뒤로 보낸다 */
+function defScore(d,i){ const t=d.definition||''; let s=i; if(/^\(/.test(t)) s+=3; if(RARE.test(t)) s+=8; return s; }
+const safeDef = d => d && d.definition && !SAFE.bad(d.definition) && !SAFE.rude(d.definition) && !OLD_OR_RUDE.test(d.definition);   // 🛡 뜻 후보 단계에서 제외
+/** 예비 영어 사전: 위키낱말사전. 주 사전 서버가 멈췄을 때 쓴다 */
+async function fetchWikt(word){
+  const r=await fetchJSON(`https://en.wiktionary.org/api/rest_v1/page/definition/${encodeURIComponent(word.toLowerCase())}`,null,9000);
+  if(r.status===404){ const e=new Error('notfound'); e.code='notfound'; throw e; }
+  if(!r.ok) throw new Error('wikt '+r.status);
+  const j=await r.json();
+  const plain=h=>{ try{ return (new DOMParser().parseFromString(String(h||''),'text/html').body.textContent||'').replace(/\s+/g,' ').trim(); }catch(e){ return ''; } };
+  const byPos={};
+  (j.en||[]).forEach(e=>{
+    if(e.language!=='English') return;
+    const p=String(e.partOfSpeech||'').toLowerCase(); if(!POS_KO[p]) return;
+    (e.definitions||[]).forEach(d=>{
+      const raw=String(d.definition||'');
+      // 이 사전은 (속어)(옛말) 같은 표시의 내용을 알려 주지 않는다. 표시가 붙은 풀이는 안전하게 모두 뺀다
+      if(!raw || /usage-label/.test(raw)) return;
+      const def={definition:plain(raw), example:plain((d.examples||[])[0]||''), synonyms:[]};
+      if(def.definition && def.definition.length<=160 && safeDef(def)) (byPos[p]=byPos[p]||[]).push(def);
+    });
+  });
+  if(!Object.keys(byPos).length){ const e=new Error('notfound'); e.code='notfound'; throw e; }
+  return {word, phonetic:'', audio:'', byPos};
+}
+/** 주 사전과 예비 사전을 함께 부르고, 주 사전이 안 되면 예비 사전 결과를 쓴다 */
+async function fetchDict(word){
+  const backup=fetchWikt(word).then(v=>({ok:1,v})).catch(e=>({ok:0,e}));
+  try{ return await fetchDictMain(word); }
+  catch(e){
+    const b=await backup;
+    if(b.ok) return b.v;
+    throw (e.code==='notfound'||b.e.code!=='notfound') ? e : b.e;
+  }
+}
+async function fetchDictMain(word){
+  const r=await fetchJSON(`https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word.toLowerCase())}`,null,6000);
+  if(r.status===404){ const e=new Error('notfound'); e.code='notfound'; throw e; }
+  if(!r.ok) throw new Error('dict '+r.status);
+  const j=await r.json(); const entries=Array.isArray(j)?j:[];
+  if(!entries.length){ const e=new Error('notfound'); e.code='notfound'; throw e; }
+  const byPos={}; let phonetic='',audio='',head='';
+  entries.forEach(e=>{
+    head=head||e.word;
+    if(!phonetic) phonetic=e.phonetic||((e.phonetics||[]).find(p=>p.text)||{}).text||'';
+    if(!audio) audio=((e.phonetics||[]).find(p=>p.audio)||{}).audio||'';
+    (e.meanings||[]).forEach(m=>{
+      const p=(m.partOfSpeech||'other').toLowerCase(); (byPos[p]=byPos[p]||[]);
+      (m.definitions||[]).forEach(d=>{ if(safeDef(d)) byPos[p].push(d); });
+    });
+  });
+  Object.keys(byPos).forEach(p=>{
+    if(!byPos[p].length){ delete byPos[p]; return; }
+    byPos[p]=byPos[p].map((d,i)=>({d,s:defScore(d,i)})).sort((a,b)=>a.s-b.s).map(x=>x.d);
+  });
+  return {word:head||word, phonetic, audio, byPos};
+}
+const MAX=5;
+async function lookupFree(input){
+  const word=input.toLowerCase();
+  const [dRes,gRes]=await Promise.all([
+    fetchDict(word).then(v=>({ok:1,v})).catch(e=>({ok:0,e})),
+    koGlossary(word).then(v=>({ok:1,v})).catch(e=>({ok:0,e}))
+  ]);
+  if(!dRes.ok && !gRes.ok){
+    if(dRes.e && dRes.e.code==='notfound'){ const e=new Error('notfound'); e.code='notfound'; throw e; }
+    throw new Error('offline');
+  }
+  const dict=dRes.ok?dRes.v:{word,phonetic:'',audio:'',byPos:{}};
+  const gloss=gRes.ok?gRes.v:{main:'',dict:[]};
+  const senses=[], seen=new Set(), usedDef=new Set();
+  const stem=word.slice(0,Math.min(word.length,4));
+  const hasWord=(text,w)=>new RegExp('\\b'+w.replace(/[^a-z' -]/g,'')+'\\b','i').test(text);
+  /** 이 한국어 뜻과 같은 뜻임이 확인되는 영어 풀이만 고른다. 확인이 안 되면 붙이지 않는다 */
+  function pairDef(pos, back){
+    const defs=(dict.byPos[pos]||[]).filter(d=>!usedDef.has(d));
+    const keys=back.filter(b=>b && b!==word && b.length>2);
+    let d=defs.find(x=>keys.some(k=>hasWord(x.definition,k) || (x.synonyms||[]).some(s=>String(s).toLowerCase()===k)));
+    if(!d && (dict.byPos[pos]||[]).length===1) d=defs[0];       // 그 품사에 뜻풀이가 하나뿐이면 헷갈릴 일이 없다
+    if(!d) return {en:'', example:''};
+    usedDef.add(d);
+    const ex=d.example && d.example.toLowerCase().includes(stem) && d.example.length<=90 ? d.example : '';
+    return {en:d.definition, example:ex};
+  }
+  const dictPos=Object.keys(dict.byPos);
+  gloss.dict.forEach(g=>{
+    // 번역 사전이 품사를 잘못 붙이는 일이 있다. 영어 사전에 품사가 하나뿐이면 그쪽을 믿는다
+    if(dictPos.length===1 && g.pos!==dictPos[0]) g.pos=dictPos[0];
+    const mine=[];                                               // 이 품사에서 만든 뜻들
+    g.items.forEach(it=>{
+      if(seen.has(it.ko)) return; seen.add(it.ko);
+      // 되짚은 영어 낱말이 겹치면 같은 뜻의 다른 표현으로 보고 "비슷한 뜻"에 넣는다
+      const twin=mine.find(s=>s._back.some(b=>b!==word && it.back.includes(b)));
+      if(twin || (!it.back.length && mine.length)){
+        const t=twin||mine[0]; if(t._alt.length<3) t._alt.push(it.ko); return;
+      }
+      if(mine.length>=3 || senses.length>=MAX) return;
+      const s={pos:POS_KO[g.pos]||g.pos||'뜻', ko:it.ko, _alt:[], _back:it.back, _pos:g.pos, en:'', example:'', exampleKo:''};
+      mine.push(s); senses.push(s);
+    });
+  });
+  senses.forEach(s=>{
+    const p=pairDef(s._pos, s._back);
+    s.en=p.en; s.example=p.example; s.alt=s._alt.join(', ');
+    delete s._alt; delete s._back; delete s._pos;
+  });
+  const firstPos=Object.keys(dict.byPos)[0];
+  if(!senses.length && gloss.main && !SAFE.bad(gloss.main) && gloss.main.toLowerCase()!==word){
+    // 뜻 목록은 없고 대표 번역만 있을 때: 사전의 대표 뜻풀이와 짝짓는다
+    const d=firstPos?dict.byPos[firstPos][0]:null;
+    senses.push({pos:firstPos?(POS_KO[firstPos]||firstPos):'뜻', ko:gloss.main, alt:'',
+                 en:d?d.definition:'', example:d&&d.example&&d.example.length<=90?d.example:'', exampleKo:''});
+  }
+  const extras=[];
+  if(!senses.length){
+    // 한국어 뜻을 전혀 못 받았을 때만 영어 풀이를 번역해서 보여 준다
+    Object.keys(dict.byPos).forEach(p=>{
+      if(extras.length>=3) return;
+      const d=dict.byPos[p][0];
+      if(d) extras.push({pos:POS_KO[p]||p, ko:'', en:d.definition, example:d.example||'', exampleKo:''});
+    });
+  }
+  const all=senses.concat(extras).slice(0,MAX);
+  if(!all.length){ const e=new Error('notfound'); e.code='notfound'; throw e; }
+  await Promise.all(all.map(async s=>{
+    if(!s.ko&&s.en) s.ko=await tr(s.en,'en','ko');
+    if(!s.ko) s.ko=s.en||'뜻';
+    if(s.example) s.exampleKo=await tr(s.example,'en','ko');
+  }));
+  return {word:dict.word||word, phonetic:dict.phonetic, audio:dict.audio, emoji:emojiFor(dict.word||word),
+          koWord:gloss.main||all[0].ko, meanings:all, source:'free'};
+}
+
+/* ================= AI 사전 (선택) ================= */
+const PROMPT=w=>`당신은 한국 초등학교 2학년(만 8세) 아이를 위한 영어 사전입니다.
+단어: "${w}"
+규칙:
+- 아이가 실제로 쓰는 가장 흔한 뜻부터 최대 5개. 옛말·속어·전문용어는 넣지 마세요.
+- ko: 한국어 뜻을 아주 짧고 쉬운 말로. en: 12단어 이내의 쉬운 영어 정의.
+- example: 6단어 이내 쉬운 예문. exampleKo: 그 예문의 자연스러운 한국어 뜻.
+- pos: 명사/동사/형용사/부사/전치사 중 한국어로. emoji: 단어를 나타내는 이모지 1개.
+- phonetic: 미국식 발음기호. 철자가 틀렸으면 correction에 올바른 단어.
+- 아이에게 부적절한 단어면 meanings를 빈 배열로.
+JSON만 출력(백틱 금지):
+{"word":"","phonetic":"","emoji":"","koWord":"","correction":"","meanings":[{"pos":"","ko":"","en":"","example":"","exampleKo":""}]}`;
+async function lookupAI(word){
+  const headers={"Content-Type":"application/json"};
+  if(apiKey){ headers["x-api-key"]=apiKey; headers["anthropic-version"]="2023-06-01"; headers["anthropic-dangerous-direct-browser-access"]="true"; }
+  const r=await fetchJSON("https://api.anthropic.com/v1/messages",{method:"POST",headers,
+    body:JSON.stringify({model:"claude-sonnet-4-6",max_tokens:1000,messages:[{role:"user",content:PROMPT(word)}]})},25000);
+  if(!r.ok) throw new Error('ai '+r.status);
+  const data=await r.json();
+  const text=(data.content||[]).map(b=>b.text||'').join('\n').replace(/```json|```/g,'').trim();
+  const d=JSON.parse(text);
+  if(!d.meanings||!d.meanings.length){ const e=new Error('notfound'); e.code='notfound'; throw e; }
+  d.emoji=d.emoji||emojiFor(d.word); d.source='ai'; return d;
+}
+async function lookupSmart(input){
+  let word=input.trim();
+  if(SAFE.blockedWord(word)){ const e=new Error('blocked'); e.code='blocked'; throw e; }   // 🛡 검색어 차단
+  if(/[가-힣]/.test(word)){
+    const k=KIDS.findKo(word);                                   // ⭐ 한글 뜻으로 기본 사전부터 찾는다
+    if(k) return SAFE.sanitize(KIDS.result(k,''));
+    const en=await tr(word,'ko','en'); if(en) word=en.replace(/^(to|a|an|the)\s+/i,'').split(/[ ,.]/)[0];
+  }
+  word=word.replace(/[^A-Za-z'’\- ]/g,'').trim();
+  if(!word){ const e=new Error('notfound'); e.code='notfound'; throw e; }
+  if(SAFE.blockedWord(word)){ const e=new Error('blocked'); e.code='blocked'; throw e; }
+  const hit=KIDS.find(word);                                     // ⭐ 기본 사전에 있으면 인터넷보다 먼저
+  if(hit) return SAFE.sanitize(KIDS.result(hit.entry, hit.from));
+  let res=null;
+  if(SANDBOX||apiKey){ try{ res = await lookupAI(word); }catch(e){ if(e.code==='notfound') throw e; } }
+  if(!res) res = await lookupFree(word);
+  return SAFE.sanitize(res);                                                                // 🛡 결과 재검사
+}
+
+/* =========================================================
+   네이버 사전 뜻 옮겨 담기
+   ========================================================= */
+const POS_RE = /^\[?(명사|동사|형용사|부사|대명사|전치사|접속사|감탄사|관사|수사|자동사|타동사)\]?\s*[:.]?\s*/;
+function parsePasted(text){
+  let t = String(text||'').replace(/\r/g,'\n');
+  t = t.replace(/\s(\d{1,2})\.\s/g, '\n$1. ');          // "1. 학교 2. 수업" → 줄 나눔
+  const out = [];
+  t.split('\n').map(s=>s.trim()).filter(Boolean).forEach(raw=>{
+    let l = raw.replace(/^\d+[.)]\s*/,'').replace(/^[-•·▶]\s*/,'').trim();
+    if(!l) return;
+    // 영어로만 된 줄은 바로 앞 뜻의 예문으로
+    if(/^[A-Za-z][A-Za-z0-9 ,.'’"!?()-]{5,}$/.test(l)){
+      if(out.length && !out[out.length-1].example) out[out.length-1].example = l;
+      return;
+    }
+    let pos = '뜻';
+    const m = l.match(POS_RE);
+    if(m){ pos = m[1]; l = l.slice(m[0].length).trim(); }
+    if(!l) return;
+    l.split(/\s*[;·]\s*/).forEach(part=>{
+      const p = part.replace(/^,\s*/,'').trim();
+      if(p && out.length < 8) out.push({pos, ko:p, en:'', example:'', exampleKo:''});
+    });
+  });
+  return out;
+}
+
+function naverPanelHTML(word){
+  return `
+  <div class="pen-tip naver-tip" style="margin-top:22px">📗 네이버 사전에서 본 뜻을 그대로 옮겨 담아요</div>
+  <ol class="steps">
+    <li><b>네이버 사전 열기</b>를 눌러 단어를 확인해요.</li>
+    <li>마음에 드는 뜻 부분을 <b>드래그해서 복사</b>해요.</li>
+    <li>아래 칸에 붙여넣고 <b>뜻 나누기</b>를 눌러요.</li>
+    <li>형광펜으로 칠해서 카드에 넣을 뜻을 고르면 끝!</li>
+  </ol>
+  <div class="actions" style="margin-bottom:14px">
+    <button class="btn naver small" id="openNaver">📗 네이버 사전 열기</button>
+  </div>
+  <textarea class="pad" id="pasteTxt" placeholder="여기에 붙여넣기&#10;예)&#10;1. 학교&#10;2. 수업&#10;3. 무리, 떼"></textarea>
+  <div class="actions"><button class="btn mint" id="parseBtn">✂️ 뜻 나누기</button></div>`;
+}
+function bindNaverPanel(word){
+  $('#openNaver').onclick = ()=>openNaver(word);
+  $('#parseBtn').onclick = ()=>{
+    const raw = parsePasted($('#pasteTxt').value);
+    if(!raw.length){ toast('붙여넣은 뜻을 찾지 못했어요'); return; }
+    const {kept:list, hidden} = SAFE.filterMeanings(raw);          // 🛡 붙여넣은 내용도 검사
+    if(!list.length){ blockedNotice(); return; }
+    found = {word, phonetic:'', audio:'', emoji:emojiFor(word), koWord:list[0].ko,
+             meanings:list, hidden, source:'naver'};
+    picked = new Set(list.map((_,i)=>i));
+    renderPicker();
+    $('#findArea').scrollIntoView({behavior:'smooth', block:'start'});
+  };
+}
+
+/* ================= 뜻 찾기 화면 ================= */
+/* 글자를 치는 동안 기본 사전의 단어만 추천한다 */
+function renderSuggest(){
+  const list = KIDS.suggest($('#wordInput').value, 6).filter(e=>!SAFE.blockedWord(e.word) && !SAFE.bad(e.meanings[0].ko));
+  $('#suggest').innerHTML = list.map(e=>
+    `<button class="sug" data-w="${esc(e.word)}">${esc(e.emoji||'')} ${esc(e.word)} <small>${esc(e.meanings[0].ko)}</small></button>`).join('');
+}
+$('#wordInput').addEventListener('input', renderSuggest);
+$('#suggest').addEventListener('click', e=>{
+  const b = e.target.closest('.sug'); if(!b) return;
+  $('#wordInput').value = b.dataset.w; doFind();
+});
+$('#findBtn').addEventListener('click', doFind);
+$('#wordInput').addEventListener('keydown', e=>{ if(e.key==='Enter') doFind(); });
+function blockedNotice(){
+  $('#findArea').innerHTML = `<div class="pen-tip" style="margin-top:22px">🛡 이 단어는 어린이 단어장에 넣을 수 없어요. 궁금하면 부모님이나 선생님께 여쭤보세요.</div>`;
+}
+$('#naverBtn').addEventListener('click', ()=>{
+  const w = $('#wordInput').value.trim();
+  if(!w){ toast('단어를 먼저 써 주세요!'); $('#wordInput').focus(); return; }
+  if(SAFE.blockedWord(w)){ blockedNotice(); return; }     // 🛡 사전 페이지도 열지 않는다
+  editingId = null;
+  $('#findArea').innerHTML = naverPanelHTML(w);
+  bindNaverPanel(w);
+  openNaver(w);
+});
+$('#handBtn').addEventListener('click', ()=>{
+  const w=$('#wordInput').value.trim()||'word';
+  if(SAFE.blockedWord(w)){ blockedNotice(); return; }
+  $('#findArea').innerHTML = manualHTML(); bindManual(w);
+});
+
+async function doFind(){
+  const w=$('#wordInput').value.trim();
+  if(!w){ toast('단어를 먼저 써 주세요!'); $('#wordInput').focus(); return; }
+  editingId=null; $('#suggest').innerHTML='';
+  if(naverFirst && !SAFE.blockedWord(w)) openNaver(w);   // 설정에서 켰을 때만 (🛡 걸러야 할 말이면 열지 않는다)
+  $('#findArea').innerHTML=`<div class="loading"><span class="dots"><span></span><span></span><span></span></span> 사전을 찾아보는 중이에요…</div>`;
+  try{
+    found = await lookupSmart(w);
+    picked = new Set([0]);
+    renderPicker();
+  }catch(e){
+    if(e.code==='blocked'){                      // 🛡 아이 화면에는 뜻도, 대체 입력창도 보여 주지 않는다
+      $('#findArea').innerHTML = `<div class="pen-tip" style="margin-top:22px">🛡 이 단어는 어린이 단어장에 넣을 수 없어요. 궁금하면 부모님이나 선생님께 여쭤보세요.</div>`;
+      return;
+    }
+    if(!navigator.onLine){                       // 인터넷이 없을 때는 네이버 대신 직접 쓰기로 안내한다
+      $('#findArea').innerHTML = `<div class="error">지금은 인터넷이 없어서 앱에 들어 있는 기본 단어만 찾을 수 있어요. <b>${esc(w)}</b> 의 뜻을 알면 직접 써서 카드를 만들어 보세요.</div>` + manualHTML();
+      bindManual(w.replace(/[^A-Za-z'’\- ]/g,'').trim() || w);
+      return;
+    }
+    const nf = e.code==='notfound';
+    $('#findArea').innerHTML = `<div class="error">${nf
+      ? `자동 사전에 <b>${esc(w)}</b> 가 없어요. 네이버 사전에서 찾아 뜻을 옮겨 담아 볼까요?`
+      : `인터넷으로 뜻을 가져오지 못했어요. 네이버 사전에서 뜻을 옮겨 담거나, 직접 써서 카드를 만들 수 있어요.`
+    }</div>` + naverPanelHTML(w);
+    bindNaverPanel(w);
+  }
+}
+
+function meaningHTML(m,i,on){
+  return `<button class="meaning ${on?'on':''}" data-i="${i}">
+    <span class="tick">✓</span>
+    <span class="pos">${esc(m.pos||'뜻')}</span>
+    <span class="ko">${esc(m.ko)}</span>
+    ${m.alt?`<span class="alt">비슷한 뜻: ${esc(m.alt)}</span>`:''}
+    ${m.en?`<span class="en">${esc(m.en)}</span>`:''}
+    ${m.example?`<span class="ex">💬 ${esc(m.example)}</span><span class="exko">${esc(m.exampleKo||'')}</span>`:''}
+  </button>`;
+}
+const SRC_LABEL = {kids:'⭐ 앱에 들어 있는 초등 기본 단어 사전이에요', ai:'🤖 AI 사전에서 찾았어요', free:'📖 Free Dictionary API · 한국어 뜻 Google 번역 사전',
+                   naver:'📗 네이버 사전에서 옮긴 뜻이에요', manual:'✍️ 직접 쓴 뜻이에요', saved:'💾 저장해 둔 뜻이에요'};
+
+function renderPicker(){
+  const d=found, isEdit=!!editingId;
+  $('#findArea').innerHTML=`
+    <div class="found-head">
+      <span style="font-size:44px">${esc(d.emoji||'⭐')}</span>
+      <span class="found-word">${esc(d.word)}</span>
+      ${d.phonetic?`<span class="found-ph">${esc(d.phonetic)}</span>`:''}
+      <button class="speak" id="spk" aria-label="발음 듣기">🔊</button>
+      ${d.koWord?`<span class="gloss">${esc(d.koWord)}</span>`:''}
+    </div>
+    ${d.correction?`<div class="pen-tip">🙌 <b>${esc(d.correction)}</b> 를 찾았어요!</div>`:''}
+    ${d.note?`<div class="pen-tip">🙌 <b>${esc(d.note)}</b> · 모양이 바뀌기 전 기본 단어의 뜻이에요.</div>`:''}
+    <div class="pen-tip">🖍 아이가 고른 뜻만 카드 뒷면에 들어가요. 눌러서 형광펜으로 칠해 보세요!</div>
+    <div id="mList">${d.meanings.map((m,i)=>meaningHTML(m,i,picked.has(i))).join('')}</div>
+    <div class="actions">
+      <button class="btn mint" id="makeBtn">${isEdit?'✅ 뜻 바꾸기':'✨ 카드 만들기'}</button>
+      <button class="btn naver small" id="naverAgain">📗 네이버 사전에서 더 찾기</button>
+      <button class="btn ghost small" id="cancelBtn">그만두기</button>
+    </div>
+    <p class="src">${SRC_LABEL[d.source]||''}${d.hidden?` · 🛡 어린이에게 맞지 않는 뜻 ${d.hidden}개는 숨겼어요`:''}</p>`;
+  prepareAudio(d.audio);
+  $('#spk').onclick=()=>speak(d.word,d.audio);
+  $('#naverAgain').onclick=()=>{
+    const w=d.word;
+    $('#findArea').innerHTML = naverPanelHTML(w); bindNaverPanel(w); openNaver(w);
+  };
+  $('#mList').addEventListener('click',e=>{
+    const b=e.target.closest('.meaning'); if(!b) return;
+    const i=+b.dataset.i;
+    picked.has(i)?picked.delete(i):picked.add(i);
+    b.classList.toggle('on');
+    $('#makeBtn').disabled = picked.size===0;
+  });
+  $('#makeBtn').disabled = picked.size===0;
+  $('#makeBtn').onclick = saveCard;
+  $('#cancelBtn').onclick=()=>{ $('#findArea').innerHTML=''; if(isEdit){ editingId=null; go('study'); } };
+}
+
+function saveCard(){
+  const chosen=[...picked].sort((a,b)=>a-b).map(i=>found.meanings[i]);
+  if(editingId){
+    const c=cards.find(c=>c.id===editingId);
+    c.meanings=chosen; c.all=found.meanings; c.source=found.source;
+    editingId=null; $('#findArea').innerHTML='';
+    save(); render(); go('study'); toast('뜻을 바꿨어요!'); return;
+  }
+  const dup=cards.findIndex(c=>c.word.toLowerCase()===found.word.toLowerCase());
+  const card={id:Date.now()+'', word:found.word, phonetic:found.phonetic||'', audio:found.audio||'',
+              emoji:found.emoji||'⭐', koWord:found.koWord||'', meanings:chosen, all:found.meanings,
+              source:found.source, made:Date.now()};
+  if(dup>=0){ cards[dup]=card; idx=dup; toast('이미 있던 단어를 새로 고쳤어요!'); }
+  else { cards.unshift(card); idx=0; toast('카드가 만들어졌어요! 🎉'); }
+  $('#wordInput').value=''; $('#findArea').innerHTML='';
+  save(); render(); go('study');
+}
+
+function manualHTML(){
+  return `<div class="manual">
+    <p class="hint" style="margin-top:16px">뜻을 한 줄에 하나씩 써 주세요. 쓴 뜻은 모두 카드에 들어가요.</p>
+    <textarea class="pad" id="manualTxt" placeholder="예)&#10;학교&#10;공부하는 곳"></textarea>
+    <div class="actions"><button class="btn mint" id="manualBtn">✨ 카드 만들기</button></div>
+  </div>`;
+}
+function bindManual(w){
+  $('#manualBtn').onclick=()=>{
+    const lines=$('#manualTxt').value.split('\n').map(s=>s.trim()).filter(Boolean);
+    if(!lines.length){ toast('뜻을 한 개 이상 써 주세요!'); return; }
+    const {kept:list, hidden} = SAFE.filterMeanings(lines.map(k=>({pos:'뜻',ko:k,en:'',example:'',exampleKo:''})));
+    if(!list.length){ blockedNotice(); return; }
+    found={word:w, phonetic:'', emoji:emojiFor(w), koWord:list[0].ko, meanings:list, hidden, source:'manual'};
+    picked=new Set(list.map((_,i)=>i)); saveCard();
+  };
+}
+
+/* ================= 카드 공부 ================= */
+function renderStudy(){
+  const el=$('#s-study');
+  if(!cards.length){
+    el.innerHTML=`<div class="panel empty"><div class="e">🃏</div><p>아직 카드가 없어요.<br>먼저 단어를 모아 볼까요?</p>
+      <button class="btn" id="goAdd">✏️ 단어 모으러 가기</button></div>`;
+    $('#goAdd').onclick=()=>go('add'); return;
+  }
+  if(idx>=cards.length) idx=0;
+  const c=cards[idx];
+  el.innerHTML=`
+    <div class="stage"><div class="card" id="card" tabindex="0" role="button" aria-label="카드 뒤집기">
+      <div class="face front">
+        <div class="emoji">${esc(c.emoji)}</div>
+        <div class="big">${esc(c.word)}</div>
+        ${c.phonetic?`<div class="ph">${esc(c.phonetic)}</div>`:''}
+        <div class="flip-hint">👆 눌러서 뒤집기</div>
+      </div>
+      <div class="face back">
+        <h3>${esc(c.word)}</h3>
+        ${c.meanings.map(m=>`<div class="m">
+          <span class="pos">${esc(m.pos||'뜻')}</span>
+          <div><span class="ko">${esc(m.ko||m.en)}</span></div>
+          ${m.en?`<div class="en">${esc(m.en)}</div>`:''}
+          ${m.example?`<div class="ex">💬 ${esc(m.example)}</div><div class="exko">${esc(m.exampleKo||'')}</div>`:''}
+        </div>`).join('')}
+        ${c.source==='naver'?`<div class="from">뜻 출처: 네이버 사전</div>`:''}
+      </div>
+    </div></div>
+    <div class="deck-bar">
+      <button class="nav" id="prev" aria-label="이전 카드">◀</button>
+      <span class="progress">${idx+1} / ${cards.length}</span>
+      <button class="nav" id="next" aria-label="다음 카드">▶</button>
+      <button class="btn small ghost" id="spk2">🔊 소리 듣기</button>
+      <button class="btn small naver" id="nav2">📗 네이버 사전</button>
+      <button class="btn small ghost" id="shuffle">🔀 섞기</button>
+      <button class="btn small ghost" id="edit">🖍 뜻 다시 고르기</button>
+      <button class="btn small coral" id="del">🗑 카드 버리기</button>
+    </div>`;
+  const card=$('#card'); const flip=()=>card.classList.toggle('flip');
+  prepareAudio(c.audio);            // 🔊 버튼을 누르기 전에 파일이 살아 있는지 미리 확인
+  card.onclick=flip;
+  card.onkeydown=e=>{ if(e.key===' '||e.key==='Enter'){ e.preventDefault(); flip(); } };
+  $('#prev').onclick=()=>{ idx=(idx-1+cards.length)%cards.length; renderStudy(); };
+  $('#next').onclick=()=>{ idx=(idx+1)%cards.length; renderStudy(); };
+  $('#spk2').onclick=()=>speak(c.word,c.audio);
+  $('#nav2').onclick=()=>openNaver(c.word);
+  $('#shuffle').onclick=()=>{ cards.sort(()=>Math.random()-.5); idx=0; save(); renderStudy(); toast('카드를 섞었어요!'); };
+  $('#edit').onclick=()=>{
+    found={word:c.word, phonetic:c.phonetic, emoji:c.emoji, audio:c.audio, koWord:c.koWord,
+           meanings:(c.all&&c.all.length)?c.all:c.meanings, source:c.source||'saved'};
+    picked=new Set(found.meanings.map((m,i)=> c.meanings.some(x=>(x.ko||x.en)===(m.ko||m.en))?i:-1).filter(i=>i>=0));
+    editingId=c.id;
+    go('add'); $('#wordInput').value=c.word; renderPicker();
+    $('#findArea').scrollIntoView({behavior:'smooth',block:'start'});
+  };
+  $('#del').onclick=()=>{
+    if(!confirm(`"${c.word}" 카드를 버릴까요?`)) return;
+    cards=cards.filter(x=>x.id!==c.id); if(idx>=cards.length) idx=0;
+    save(); render(); toast('카드를 버렸어요.');
+  };
+  let x0=null;
+  card.addEventListener('touchstart',e=>{ x0=e.touches[0].clientX; },{passive:true});
+  card.addEventListener('touchend',e=>{
+    if(x0===null) return; const dx=e.changedTouches[0].clientX-x0; x0=null;
+    if(Math.abs(dx)>70){ idx=(idx+(dx<0?1:cards.length-1))%cards.length; renderStudy(); }
+  });
+}
+
+/* ================= 목록 ================= */
+function renderList(){
+  const el=$('#listArea');
+  if(!cards.length){ el.innerHTML=`<div class="empty"><div class="e">🗂</div><p>단어를 모으면 여기에 쌓여요.</p></div>`; return; }
+  el.innerHTML=`<div class="grid">`+cards.map((c,i)=>`
+    <div class="chip" data-i="${i}" tabindex="0">
+      <div class="e">${esc(c.emoji)}</div>
+      <div class="w">${esc(c.word)}</div>
+      <div class="k">${esc(c.meanings.map(m=>m.ko||m.en).join(', ').slice(0,40))}</div>
+    </div>`).join('')+`</div>`;
+  el.querySelectorAll('.chip').forEach(ch=>{
+    const open=()=>{ idx=+ch.dataset.i; go('study'); };
+    ch.onclick=open; ch.onkeydown=e=>{ if(e.key==='Enter') open(); };
+  });
+}
+
+/* ================= 설정 ================= */
+$('#gearBtn').onclick=()=>{ $('#keyInput').value=apiKey; $('#modal').classList.add('on'); };
+$('#closeModal').onclick=()=>$('#modal').classList.remove('on');
+$('#modal').onclick=e=>{ if(e.target.id==='modal') $('#modal').classList.remove('on'); };
+$('#naverFirst').onchange=async e=>{ naverFirst=e.target.checked; await store.set(KEY_NF, naverFirst?'1':'0'); toast(naverFirst?'네이버 사전을 함께 열어요':'네이버 사전 자동 열기를 껐어요'); };
+$('#soundPlay').onclick = ()=> speak('test', '');
+$('#soundBtn').onclick = async ()=>{
+  const d=$('#sound'), line=(n,s)=>`<b>${n}</b> — ${s}<br>`;
+  d.innerHTML='확인하는 중이에요…'; let out='';
+  if('speechSynthesis' in window){
+    loadVoices();
+    const en = voices.filter(v=>/^en/i.test(v.lang));
+    out += line('기기 음성', en.length ? `✅ 영어 목소리 ${en.length}개 (${esc((pickVoice()||{}).name||'기본')})`
+                                       : '⚠️ 영어 목소리가 없어요 — 예비 음성으로 대신해요');
+  } else out += line('기기 음성','❌ 이 브라우저는 음성합성을 지원하지 않아요');
+  const test = 'https://api.dictionaryapi.dev/media/pronunciations/en/school-us.mp3';
+  const e1 = prepareAudio(test);
+  await new Promise(r=>{ const t=setInterval(()=>{ if(e1.ok!==null){ clearInterval(t); r(); } },200); setTimeout(()=>{clearInterval(t);r();},4500); });
+  out += line('사전 녹음 파일', e1.ok ? '✅ 재생 가능' : '⚠️ 못 받아옴 — 기기 음성으로 대신해요');
+  out += line('현재 카드 방식', '단어마다 파일이 없을 수 있어, 없으면 자동으로 기기 음성이 나와요');
+  out += line('소리가 안 들린다면', '기기 음량 · 아이패드 무음 스위치 · 탭 음소거를 확인해 주세요');
+  d.innerHTML = out;
+};
+$('#blockSave').onclick=async()=>{
+  const v=$('#blockList').value;
+  extraBlock=SAFE.parseList(v);
+  await store.set(KEY_BL, v);
+  toast(`보호 목록에 ${extraBlock.length}개를 넣었어요`);
+};
+$('#keySave').onclick=async()=>{ apiKey=$('#keyInput').value.trim(); await store.set(KEY_API,apiKey); toast(apiKey?'AI 사전을 켰어요':'AI 사전을 껐어요'); };
+$('#keyClear').onclick=async()=>{ apiKey=''; $('#keyInput').value=''; await store.set(KEY_API,''); toast('키를 지웠어요'); };
+
+$('#diagBtn').onclick=async()=>{
+  const d=$('#diag'), line=(n,s)=>`<b>${n}</b> — ${s}<br>`;
+  d.innerHTML='확인하는 중이에요…'; let out='';
+  out+=line('저장 방식', SANDBOX?'✅ Claude 미리보기 저장소':'✅ 브라우저 저장소(localStorage)');
+  if(!SANDBOX){ try{ localStorage.setItem('__t','1'); localStorage.removeItem('__t'); }
+    catch(e){ out+=line('저장 테스트','❌ 브라우저가 저장을 막고 있어요'); } }
+  if(!storageWorks()) out+=line('카드 저장','❌ 이 열기 방식에서는 카드가 저장되지 않아요');
+  out+=line('기본 단어 사전', `✅ ${KIDS.size}개 단어 (인터넷 없이 사용)`);
+  out+=line('어린이 보호 필터', `✅ 켜짐 (부모님이 더한 말 ${extraBlock.length}개)`);
+  out+=line('네이버 사전','✅ 링크로 열기 + 붙여넣기 방식 (자동 수집 불가)');
+  try{ await fetchDictMain('school'); out+=line('영어 사전', '✅ 연결됨'); }
+  catch(e){ out+=line('영어 사전','⚠️ 응답 없음 — 예비 사전으로 대신해요'); }
+  try{ await fetchWikt('school'); out+=line('예비 영어 사전', '✅ 연결됨'); }
+  catch(e){ out+=line('예비 영어 사전','❌ 연결 실패'); }
+  try{ const g=await koGlossary('school');
+       out+=line('한국어 뜻 사전', g.dict.length?`✅ 연결됨 (school → ${esc(g.dict[0].terms[0])})`:'⚠️ 뜻 목록 없음'); }
+  catch(e){ out+=line('한국어 뜻 사전','⚠️ 사용 불가 — 예비 번역으로 대체돼요'); }
+  try{ await myMemory('apple','en','ko'); out+=line('예비 번역','✅ 연결됨'); }
+  catch(e){ out+=line('예비 번역','⚠️ 사용 불가'); }
+  if(SANDBOX||apiKey){ try{ await lookupAI('apple'); out+=line('AI 사전','✅ 연결됨'); }
+    catch(e){ out+=line('AI 사전','⚠️ 사용 불가'); } }
+  else out+=line('AI 사전','· 꺼짐 (키를 넣으면 켜져요)');
+  d.innerHTML=out;
+};
+
+$('#exportBtn').onclick=()=>{
+  const blob=new Blob([JSON.stringify(cards,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=`word-cards-${new Date().toISOString().slice(0,10)}.json`; a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href),3000); toast('파일로 내보냈어요');
+};
+$('#importBtn').onclick=()=>$('#importFile').click();
+$('#importFile').onchange=async e=>{
+  const f=e.target.files[0]; if(!f) return;
+  try{
+    const arr=JSON.parse(await f.text()); if(!Array.isArray(arr)) throw new Error();
+    const words=new Set(cards.map(c=>c.word.toLowerCase())); let n=0;
+    arr.forEach(c=>{
+      if(!c || typeof c.word!=='string' || !Array.isArray(c.meanings)) return;
+      if(words.has(c.word.toLowerCase()) || SAFE.blockedWord(c.word)) return;
+      c.meanings = SAFE.filterMeanings(c.meanings).kept;          // 🛡 다른 기기에서 가져온 카드도 검사
+      c.all = SAFE.filterMeanings(c.all||[]).kept;
+      if(!c.meanings.length) return;
+      if(!c.id) c.id = Date.now()+'-'+n;
+      words.add(c.word.toLowerCase()); cards.push(c); n++;
+    });
+    await save(); render(); toast(`${n}개를 가져왔어요`);
+  }catch(err){ toast('파일을 읽지 못했어요'); }
+  e.target.value='';
+};
+
+/* ================= 화면 전환 ================= */
+function go(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
+  $('#s-'+name).classList.add('on');
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t.dataset.go===name));
+  if(name==='study') renderStudy();
+  if(name==='list') renderList();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>go(t.dataset.go));
+function render(){
+  $('#cnt').textContent=cards.length;
+  if($('#s-study').classList.contains('on')) renderStudy();
+  if($('#s-list').classList.contains('on')) renderList();
+}
+load();
+</script>
+</body>
+</html>
