@@ -1,15 +1,16 @@
 /* =========================================================
-   나의 영어 단어 도감 - 오프라인 지원 (서비스 워커)
-   - 앱 파일: 저장해 둔 것을 바로 보여 주고, 인터넷이 있으면 뒤에서 새 버전으로 바꿔 둔다
-     (앱을 고쳐 올리면 다음에 열 때 반영된다)
+   나의 영어 단어 도감 - 서비스 워커
+   - 앱 파일: 인터넷이 있으면 항상 새 파일을 먼저 받아 보여 준다 (고쳐 올린 내용이 바로 반영된다).
+     3초 안에 못 받거나 인터넷이 없으면 저장해 둔 파일을 보여 준다.
    - 글꼴: 한 번 받으면 저장해 두고 계속 쓴다
    - 사전·번역 같은 인터넷 검색은 건드리지 않는다
    이 파일을 고치면 VERSION 을 올려야 기기들이 새 파일을 받는다.
    ========================================================= */
-const VERSION = 'v1';
+const VERSION = 'v2';
 const APP_CACHE = 'word-app-' + VERSION;
 const FONT_CACHE = 'word-fonts-v1';
 const APP_FILES = ['./', 'index.html', 'manifest.json', 'icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-maskable-512.png'];
+const WAIT_MS = 3000;
 
 self.addEventListener('install', e=>{
   e.waitUntil(caches.open(APP_CACHE).then(c=>c.addAll(APP_FILES)).then(()=>self.skipWaiting()));
@@ -23,7 +24,7 @@ self.addEventListener('activate', e=>{
   );
 });
 
-/** 저장본을 먼저 주고, 뒤에서 새로 받아 저장본을 바꿔 둔다 */
+/** 새 파일을 먼저 받고, 늦거나 안 되면 저장본을 준다 */
 async function appFile(req){
   const cache = await caches.open(APP_CACHE);
   const key = req.mode==='navigate' ? 'index.html' : req;
@@ -32,7 +33,11 @@ async function appFile(req){
     if(res && res.ok) cache.put(key, res.clone());
     return res;
   }).catch(()=>null);
-  if(saved){ fresh.catch(()=>{}); return saved; }
+  if(saved){
+    const late = new Promise(r=>setTimeout(()=>r(null), WAIT_MS));
+    const res = await Promise.race([fresh, late]);
+    return (res && res.ok) ? res : saved;
+  }
   return (await fresh) || new Response('인터넷이 연결되면 다시 열어 주세요.', {status:503, headers:{'Content-Type':'text/plain; charset=utf-8'}});
 }
 
